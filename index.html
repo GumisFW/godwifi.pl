@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>godwifi</title>
 
-  <!-- Preload logo  -->
   <link rel="preload" as="image" href="freewifi.png" />
 
   <style>
@@ -15,9 +14,10 @@
       --card: rgba(255,255,255,0.55);
       --border: rgba(0,0,0,0.08);
       --shadow: 0 18px 50px rgba(0,0,0,0.12);
+      --btn: rgba(0,0,0,0.06);
+      --btnHover: rgba(0,0,0,0.10);
     }
 
-    /* Dark mode wg systemu */
     @media (prefers-color-scheme: dark){
       :root{
         --bg: #0a0a0c;
@@ -25,16 +25,19 @@
         --card: rgba(20,20,24,0.55);
         --border: rgba(255,255,255,0.10);
         --shadow: 0 18px 60px rgba(0,0,0,0.55);
+        --btn: rgba(255,255,255,0.08);
+        --btnHover: rgba(255,255,255,0.14);
       }
     }
 
-    /* Ręczne wymuszenie: ?theme=light lub ?theme=dark */
     html[data-theme="light"]{
       --bg: #ffffff;
       --text: #0b0b0c;
       --card: rgba(255,255,255,0.55);
       --border: rgba(0,0,0,0.08);
       --shadow: 0 18px 50px rgba(0,0,0,0.12);
+      --btn: rgba(0,0,0,0.06);
+      --btnHover: rgba(0,0,0,0.10);
     }
     html[data-theme="dark"]{
       --bg: #0a0a0c;
@@ -42,6 +45,8 @@
       --card: rgba(20,20,24,0.55);
       --border: rgba(255,255,255,0.10);
       --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --btn: rgba(255,255,255,0.08);
+      --btnHover: rgba(255,255,255,0.14);
     }
 
     *{ box-sizing: border-box; }
@@ -56,7 +61,6 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    /* Tło z delikatnymi "blobami" + blur */
     .bg{
       position:fixed;
       inset:-40px;
@@ -70,10 +74,9 @@
       opacity:0.9;
     }
 
-    /* Karta z glassmorphism (blur) */
     .card{
       position:relative;
-      padding: 36px 34px;
+      padding: 36px 34px 26px;
       border-radius: 26px;
       background: var(--card);
       border: 1px solid var(--border);
@@ -83,17 +86,25 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      cursor:pointer;
       user-select:none;
       outline:none;
+
       transform: translateY(10px) scale(0.98);
       opacity:0;
       transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .55s ease;
     }
-
     .card.ready{
       transform: translateY(0) scale(1);
       opacity:1;
+    }
+
+    /* Klikalne tylko logo (żeby menu linki nie “łapały” kliknięcia karty) */
+    .logoBtn{
+      display:inline-block;
+      border:0;
+      background:transparent;
+      padding:0;
+      cursor:pointer;
     }
 
     .logo{
@@ -103,8 +114,7 @@
       display:block;
       transition: transform .22s ease, opacity .22s ease;
     }
-
-    .card:hover .logo{
+    .logoBtn:hover .logo{
       transform: scale(1.05);
       opacity:0.92;
     }
@@ -114,6 +124,47 @@
       text-align:center;
       font-size: 13px;
       opacity: 0.65;
+    }
+
+    /* MENU */
+    .menuWrap{
+      width: min(360px, 72vw);
+      margin: 16px auto 0;
+      overflow:hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: max-height .35s ease, opacity .25s ease, transform .35s ease;
+    }
+    .menuWrap.open{
+      max-height: 240px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .menu{
+      display:grid;
+      gap:10px;
+      padding-top: 6px;
+    }
+
+    .menu a{
+      text-decoration:none;
+      color: var(--text);
+      background: var(--btn);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      transition: background .18s ease, transform .18s ease;
+    }
+    .menu a:hover{
+      background: var(--btnHover);
+      transform: translateY(-1px);
     }
 
     /* Preloader */
@@ -136,9 +187,8 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Dostępność: mniej animacji jeśli user chce */
     @media (prefers-reduced-motion: reduce){
-      .card, .logo, .loader{ transition:none !important; }
+      .card, .logo, .loader, .menuWrap{ transition:none !important; }
       .spinner{ animation:none !important; }
     }
   </style>
@@ -151,19 +201,26 @@
     <div class="spinner" aria-hidden="true"></div>
   </div>
 
-  <!-- Cała karta jest klikalna -->
-  <div class="card" id="card" role="link" tabindex="0" aria-label="Przejdź na Instagram">
-    <div>
-      <img class="logo" id="logo" src="freewifi.png" alt="Logo" />
-      <div class="hint">Kliknij, aby przejść na Instagram</div>
+  <div class="card" id="card">
+    <div style="text-align:center;">
+      <button class="logoBtn" id="toggle" aria-expanded="false" aria-controls="menuWrap">
+        <img class="logo" id="logo" src="freewifi.png" alt="Logo" />
+      </button>
+
+      <div class="hint" id="hint">Kliknij logo, aby rozwinąć</div>
+
+      <div class="menuWrap" id="menuWrap">
+        <nav class="menu" aria-label="Linki">
+          <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Sprawdź Instagram Gumisia</a>
+          <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Sprawdź Instagram god wifi</a>
+          <a href="SPOTIFY_URL" target="_blank" rel="noopener">Sprawdź Spotify</a>
+        </nav>
+      </div>
     </div>
   </div>
 
   <script>
-    
-    const IG_URL = "https://instagram.com/god.wifi";
-
-    //  Wymuszenie motywu: ?theme=light / ?theme=dark
+    // Wymuszenie motywu: ?theme=light / ?theme=dark
     const params = new URLSearchParams(location.search);
     const theme = params.get("theme");
     if (theme === "light" || theme === "dark") {
@@ -174,17 +231,25 @@
     const card = document.getElementById("card");
     const logo = document.getElementById("logo");
 
-    function goIG(){
-      window.location.href = IG_URL;
+    // Toggle menu
+    const toggle = document.getElementById("toggle");
+    const menuWrap = document.getElementById("menuWrap");
+    const hint = document.getElementById("hint");
+
+    function setOpen(open){
+      menuWrap.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      hint.textContent = open ? "Wybierz link" : "Kliknij logo, aby rozwinąć";
     }
 
-    // klik + enter/space
-    card.addEventListener("click", goIG);
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        goIG();
-      }
+    toggle.addEventListener("click", () => {
+      const open = !menuWrap.classList.contains("open");
+      setOpen(open);
+    });
+
+    // Zamknij menu po kliknięciu poza kartą
+    document.addEventListener("click", (e) => {
+      if (!card.contains(e.target)) setOpen(false);
     });
 
     // Preload: pokaż kartę dopiero gdy logo się załaduje (albo po timeout)
@@ -193,25 +258,26 @@
       if (shown) return;
       shown = true;
       loader.classList.add("hidden");
-      // małe opóźnienie żeby fade wyglądał czysto
       setTimeout(() => card.classList.add("ready"), 40);
     }
 
-    const timeout = setTimeout(show, 1200); // awaryjnie, gdyby logo nie doszło
+    const timeout = setTimeout(show, 1200);
 
     if (logo.complete) {
       clearTimeout(timeout);
       show();
     } else {
-      logo.addEventListener("load", () => {
-        clearTimeout(timeout);
-        show();
-      });
-      logo.addEventListener("error", () => {
-        clearTimeout(timeout);
-        show();
-      });
+      logo.addEventListener("load", () => { clearTimeout(timeout); show(); });
+      logo.addEventListener("error", () => { clearTimeout(timeout); show(); });
     }
+
+    // Bonus: Enter/Space na przycisku
+    toggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
   </script>
 </body>
 </html>
