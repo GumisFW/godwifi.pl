@@ -343,7 +343,7 @@
     transform: translateY(var(--lift, 0px)) scale(var(--scale, 1));
     transform-origin: 50% 100%;
     transition: background .12s ease;
-    cursor:default;
+    cursor:pointer;
     will-change: transform;
   }
   .appicon:hover{ background: rgba(255,255,255,.22); }
@@ -357,21 +357,102 @@
     opacity:.55;
   }
 
-  .glyph{
-    width:22px; height:22px;
-    border-radius:6px;
-    background: rgba(255,255,255,.85);
-    opacity:.9;
+  /* Dock icon images */
+  .dockimg{
+    width:28px;
+    height:28px;
+    object-fit:contain;
+    display:block;
+    pointer-events:none;
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
+  }
+
+  /* macOS-like IG popup */
+  .dockPopup{
+    position:absolute;
+    left:50%;
+    bottom:62px;
+    transform:translateX(-50%) translateY(8px) scale(.98);
+    width: 240px;
+
+    padding:10px;
+    border-radius:16px;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.20);
+    box-shadow: 0 26px 90px rgba(0,0,0,.48);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    opacity:0;
+    pointer-events:none;
+    transition: .18s ease;
+    z-index:200;
+  }
+  .appicon.showPopup .dockPopup{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateX(-50%) translateY(0) scale(1);
+  }
+
+  .dockPopupHeader{
+    font-size:12px;
+    color: rgba(255,255,255,.78);
+    padding: 4px 8px 8px;
+    letter-spacing:.2px;
+  }
+  .dockSep{
+    height:1px;
+    background: rgba(255,255,255,.16);
+    margin: 6px 6px;
+    border-radius:999px;
+  }
+
+  .dockItem{
+    width:100%;
+    border:0;
+    background: transparent;
+    color: rgba(255,255,255,.92);
+    padding:10px 10px;
+    border-radius:12px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    transition:.14s ease;
+  }
+  .dockItem:hover{
+    background: rgba(255,255,255,.14);
+    transform: translateY(-1px);
+  }
+  .dockItemLeft{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .dockTiny{
+    width:16px; height:16px;
+    object-fit:contain;
+    border-radius:4px;
+    opacity:.95;
+    pointer-events:none;
+  }
+  .dockItemHint{
+    font-size:12px;
+    opacity:.65;
   }
 
   @media (max-width:420px){
     .icons{ display:none; }
     .dock{ gap:8px; padding:8px 10px; }
     .appicon{ width:42px; height:42px; border-radius:13px; }
+    .dockPopup{ width: 220px; }
   }
 
   @media (prefers-reduced-motion: reduce){
     .app, .menuWrap, .logo{ transition:none !important; }
+    .dockPopup{ transition:none !important; }
   }
 </style>
 </head>
@@ -389,9 +470,9 @@
 
       <div class="menuItem" data-menu="file">Plik
         <div class="dropdown" role="menu" aria-label="Plik">
-          <button type="button">Nowe okno <span class="kbd">⌘N</span></button>
-          <button type="button">Odśwież <span class="kbd">⌘R</span></button>
-          <button type="button">Zamknij menu <span class="kbd">Esc</span></button>
+          <button type="button" id="newWinBtn">Nowe okno <span class="kbd">⌘N</span></button>
+          <button type="button" id="reloadBtn">Odśwież <span class="kbd">⌘R</span></button>
+          <button type="button" id="closeMenusBtn">Zamknij menu <span class="kbd">Esc</span></button>
         </div>
       </div>
 
@@ -405,9 +486,9 @@
 
       <div class="menuItem" data-menu="view">Widok
         <div class="dropdown" role="menu" aria-label="Widok">
-          <button type="button">Pokaż/ukryj menu <span class="kbd">⌘E</span></button>
-          <button type="button">Tryb jasny <span class="kbd">?theme=light</span></button>
-          <button type="button">Tryb ciemny <span class="kbd">?theme=dark</span></button>
+          <button type="button" id="toggleMenuBtn">Pokaż/ukryj menu <span class="kbd">⌘E</span></button>
+          <button type="button" id="themeLightBtn">Tryb jasny <span class="kbd">?theme=light</span></button>
+          <button type="button" id="themeDarkBtn">Tryb ciemny <span class="kbd">?theme=dark</span></button>
         </div>
       </div>
 
@@ -465,20 +546,56 @@
 
   <!-- Dock -->
   <div class="dock" id="dock" aria-label="Dock">
-    <div class="appicon" title="Finder"><div class="glyph"></div><div class="runDot"></div></div>
-    <div class="appicon" title="Safari"><div class="glyph"></div><div class="runDot"></div></div>
-    <div class="appicon" title="Music"><div class="glyph"></div><div class="runDot"></div></div>
-    <div class="appicon" title="Discord"><div class="glyph"></div><div class="runDot"></div></div>
-    <div class="appicon" title="Settings"><div class="glyph"></div><div class="runDot"></div></div>
+    <!-- Instagram (popup wyboru) -->
+    <div class="appicon" id="dockIg" title="Instagram">
+      <img src="Instagram_icon.png" class="dockimg" alt="">
+      <div class="runDot"></div>
+
+      <div class="dockPopup" id="igPopup" role="menu" aria-label="Instagram menu">
+        <div class="dockPopupHeader">Instagram</div>
+        <div class="dockSep"></div>
+
+        <button class="dockItem" type="button" data-ig="gumis">
+          <span class="dockItemLeft">
+            <img src="Instagram_icon.png" class="dockTiny" alt="">
+            <span>Gumis</span>
+          </span>
+          <span class="dockItemHint">tokarz_k</span>
+        </button>
+
+        <button class="dockItem" type="button" data-ig="godwifi">
+          <span class="dockItemLeft">
+            <img src="Instagram_icon.png" class="dockTiny" alt="">
+            <span>god wifi</span>
+          </span>
+          <span class="dockItemHint">god.wifi</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Spotify -->
+    <div class="appicon" id="dockSpotify" title="Spotify">
+      <img src="Spotify_App_Logo.svg.png" class="dockimg" alt="">
+      <div class="runDot"></div>
+    </div>
+
+    <!-- Discord -->
+    <div class="appicon" id="dockDiscord" title="Discord">
+      <img src="discord-logo-icon-editorial-free-vector.png" class="dockimg" alt="">
+      <div class="runDot"></div>
+    </div>
   </div>
 
 <script>
-  // ======= PODMIEŃ LINKI TUTAJ =======
-  const SPOTIFY_URL = "WSTAW_TUTAJ_LINK_SPOTIFY";
-  const DISCORD_URL = "https://discord.gg/TWOJ_LINK";
+  // ======= LINKI (Twoje docelowe) =======
+  const IG_GUMIS = "https://instagram.com/tokarz_k";
+  const IG_GODWIFI = "https://instagram.com/god.wifi";
+  const SPOTIFY_URL = "https://open.spotify.com/artist/6iz52ADwFl483ghAI7NuS1?si=V1A-TzIoRNqL1iQ_ptCGng";
+  const DISCORD_URL = "https://discord.gg/4PTQRsUq9t";
 
-  document.getElementById("spotifyLink").href = https://open.spotify.com/artist/6iz52ADwFl483ghAI7NuS1?si=V1A-TzIoRNqL1iQ_ptCGng;
-  document.getElementById("discordLink").href = https://discord.gg/4PTQRsUq9t;
+  // Podpinamy linki w menu okna
+  document.getElementById("spotifyLink").href = SPOTIFY_URL;
+  document.getElementById("discordLink").href = DISCORD_URL;
 
   // ======= Theme override: ?theme=light / ?theme=dark =======
   const params = new URLSearchParams(location.search);
@@ -487,7 +604,7 @@
     document.documentElement.setAttribute("data-theme", theme);
   }
 
-  // ======= Toggle menu =======
+  // ======= Toggle menu w oknie =======
   const toggle = document.getElementById("toggle");
   const menuWrap = document.getElementById("menuWrap");
   const hint = document.getElementById("hint");
@@ -498,8 +615,10 @@
     toggle.setAttribute("aria-expanded", String(open));
     hint.textContent = open ? "Wybierz link" : "Kliknij logo, aby rozwinąć";
   }
-  toggle.addEventListener("click", () => setOpen(!menuWrap.classList.contains("open")));
-  document.addEventListener("click", (e) => { if (!app.contains(e.target)) setOpen(false); });
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(!menuWrap.classList.contains("open"));
+  });
 
   // ======= Window show when logo ready =======
   const logo = document.getElementById("logo");
@@ -518,49 +637,36 @@
   tick();
   setInterval(tick, 1000 * 10);
 
-  // ======= Dropdown menus =======
+  // ======= Dropdown menus (menu bar) =======
   const menuItems = Array.from(document.querySelectorAll(".menuItem"));
-  function closeAll(){
+  function closeAllMenus(){
     menuItems.forEach(i => i.classList.remove("active"));
   }
-
   menuItems.forEach(item => {
     item.addEventListener("click", (e) => {
       e.stopPropagation();
       const isActive = item.classList.contains("active");
-      closeAll();
+      closeAllMenus();
       item.classList.toggle("active", !isActive);
     });
   });
 
-  document.addEventListener("click", () => closeAll());
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") { closeAll(); setOpen(false); }
+  // Menu bar actions
+  document.getElementById("newWinBtn").addEventListener("click", () => {
+    app.animate(
+      [{transform: getComputedStyle(app).transform}, {transform: "translate3d(var(--x, 0px), var(--y, 0px), 0) scale(1.01)"}],
+      {duration: 180, direction:"alternate", easing:"ease-out"}
+    );
+    closeAllMenus();
   });
+  document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
+  document.getElementById("closeMenusBtn").addEventListener("click", () => closeAllMenus());
+  document.getElementById("toggleMenuBtn").addEventListener("click", () => { setOpen(!menuWrap.classList.contains("open")); closeAllMenus(); });
 
-  // Dropdown actions
-  document.querySelectorAll('[data-menu="file"] .dropdown button')[0].addEventListener("click", () => {
-    // fake "new window": small bounce
-    app.animate([{transform: getComputedStyle(app).transform}, {transform: "translate3d(var(--x, 0px), var(--y, 0px), 0) scale(1.01)"}], {duration: 180, direction:"alternate", easing:"ease-out"});
-    closeAll();
-  });
-
-  document.querySelectorAll('[data-menu="file"] .dropdown button')[1].addEventListener("click", () => {
-    location.reload();
-  });
-
-  document.querySelectorAll('[data-menu="file"] .dropdown button')[2].addEventListener("click", () => {
-    closeAll();
-  });
-
-  document.querySelectorAll('[data-menu="view"] .dropdown button')[0].addEventListener("click", () => {
-    setOpen(!menuWrap.classList.contains("open"));
-    closeAll();
-  });
-  document.querySelectorAll('[data-menu="view"] .dropdown button')[1].addEventListener("click", () => {
+  document.getElementById("themeLightBtn").addEventListener("click", () => {
     const u = new URL(location.href); u.searchParams.set("theme","light"); location.href = u.toString();
   });
-  document.querySelectorAll('[data-menu="view"] .dropdown button')[2].addEventListener("click", () => {
+  document.getElementById("themeDarkBtn").addEventListener("click", () => {
     const u = new URL(location.href); u.searchParams.set("theme","dark"); location.href = u.toString();
   });
 
@@ -577,31 +683,21 @@
   function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
   titlebar.addEventListener("pointerdown", (e) => {
-    // avoid drag when clicking traffic lights (still ok, but feels nicer)
     dragging = true;
     titlebar.setPointerCapture(e.pointerId);
     app.classList.add("dragging");
-
-    startX = e.clientX;
-    startY = e.clientY;
-
-    baseX = getVarPx("--x");
-    baseY = getVarPx("--y");
+    startX = e.clientX; startY = e.clientY;
+    baseX = getVarPx("--x"); baseY = getVarPx("--y");
   });
 
   titlebar.addEventListener("pointermove", (e) => {
     if (!dragging) return;
-
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-
-    // clamp so it doesn't fly off-screen
     const maxX = (window.innerWidth / 2) - 60;
     const maxY = (window.innerHeight / 2) - 80;
-
     const nx = clamp(baseX + dx, -maxX, maxX);
     const ny = clamp(baseY + dy, -maxY, maxY);
-
     app.style.setProperty("--x", nx + "px");
     app.style.setProperty("--y", ny + "px");
   });
@@ -612,6 +708,64 @@
   }
   titlebar.addEventListener("pointerup", stopDrag);
   titlebar.addEventListener("pointercancel", stopDrag);
+
+  // ======= Dock clicks + IG popup =======
+  const dockIg = document.getElementById("dockIg");
+  const igPopup = document.getElementById("igPopup");
+  const dockSpotify = document.getElementById("dockSpotify");
+  const dockDiscord = document.getElementById("dockDiscord");
+
+  function closeIgPopup(){
+    dockIg.classList.remove("showPopup");
+  }
+
+  dockSpotify.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeAllMenus();
+    closeIgPopup();
+    window.open(SPOTIFY_URL, "_blank", "noopener");
+  });
+
+  dockDiscord.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeAllMenus();
+    closeIgPopup();
+    window.open(DISCORD_URL, "_blank", "noopener");
+  });
+
+  // Instagram: klik -> pokaż/ukryj menu wyboru
+  dockIg.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeAllMenus();
+    const open = !dockIg.classList.contains("showPopup");
+    closeIgPopup();
+    dockIg.classList.toggle("showPopup", open);
+  });
+
+  // Klik w opcję
+  igPopup.querySelectorAll(".dockItem").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const which = btn.getAttribute("data-ig");
+      const url = (which === "gumis") ? IG_GUMIS : IG_GODWIFI;
+      closeIgPopup();
+      window.open(url, "_blank", "noopener");
+    });
+  });
+
+  // Klik gdziekolwiek poza: zamknij dropdowny + IG popup (i niech nie wywala menu okna)
+  document.addEventListener("click", (e) => {
+    if (!dockIg.contains(e.target)) closeIgPopup();
+    closeAllMenus();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeIgPopup();
+      closeAllMenus();
+      setOpen(false);
+    }
+  });
 
   // ======= Dock magnification =======
   const dock = document.getElementById("dock");
@@ -626,24 +780,18 @@
       const center = (ir.left + ir.width/2) - rect.left;
 
       const dist = Math.abs(center - x);
-
-      // dist 0 -> big, dist > 160 -> normal
       const maxDist = 160;
       const t = Math.max(0, 1 - (dist / maxDist));
 
-      // mac-like curve
-      const scale = 1 + (t*t) * 0.9;     // up to ~1.9
-      const lift  = - (t*t) * 12;        // lift up a bit
+      const scale = 1 + (t*t) * 0.9; // max ~1.9
+      const lift  = - (t*t) * 12;
 
       icon.style.setProperty("--scale", scale.toFixed(3));
       icon.style.setProperty("--lift", lift.toFixed(2) + "px");
     });
   }
 
-  dock.addEventListener("mousemove", (e) => {
-    setDockScales(e.clientX);
-  });
-
+  dock.addEventListener("mousemove", (e) => setDockScales(e.clientX));
   dock.addEventListener("mouseleave", () => {
     icons.forEach(icon => {
       icon.style.setProperty("--scale", "1");
@@ -654,3 +802,4 @@
 
 </body>
 </html>
+
