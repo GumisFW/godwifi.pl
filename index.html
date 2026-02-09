@@ -83,7 +83,7 @@
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border-bottom:1px solid rgba(255,255,255,.12);
-    z-index:50;
+    z-index:5000;
   }
 
   .menubar .left, .menubar .right{
@@ -125,8 +125,10 @@
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     display:none;
+    z-index:6000;
   }
   .menuItem.active .dropdown{ display:block; }
+
   .dropdown a, .dropdown button{
     display:flex;
     width:100%;
@@ -142,9 +144,7 @@
     border:0;
     cursor:default;
   }
-  .dropdown a:hover, .dropdown button:hover{
-    background: rgba(255,255,255,.12);
-  }
+  .dropdown a:hover, .dropdown button:hover{ background: rgba(255,255,255,.12); }
   .kbd{
     opacity:.7;
     font-variant-numeric: tabular-nums;
@@ -204,9 +204,7 @@
     border-radius:8px;
     cursor:pointer;
   }
-  .wifiBtn:hover{
-    background: rgba(255,255,255,.12);
-  }
+  .wifiBtn:hover{ background: rgba(255,255,255,.12); }
 
   /* ===== Desktop icons ===== */
   .icons{
@@ -215,7 +213,7 @@
     left:20px;
     display:grid;
     gap:16px;
-    z-index:1;
+    z-index:10;
     color:rgba(255,255,255,.90);
   }
 
@@ -260,18 +258,17 @@
   }
 
   /* ===== Stage + windows ===== */
- .stage{
-  position:fixed;
-  inset:0;
-  padding: 72px 16px 92px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10;
-  pointer-events:auto; /* <- KLUCZ: inaczej drag/klik nie działa */
-}
+  .stage{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    pointer-events:none; /* okna dostają pointer-events */
+  }
 
   .app{
+    position:absolute;
+    left:50%;
+    top:50%;
     width:min(560px, 92vw);
     border-radius:22px;
     overflow:hidden;
@@ -284,11 +281,15 @@
 
     opacity:0;
     pointer-events:none;
-    transform: translate3d(var(--x, 0px), var(--y, 0px), 0) scale(.98);
+
+    /* zawsze start z centrum + offsety */
+    transform: translate(-50%, -50%) translate3d(var(--x, 0px), var(--y, 0px), 0) scale(.98);
+    z-index:50;
   }
   .app.open{
     opacity:1;
     pointer-events:auto;
+    z-index:200;
   }
   .app.dragging{
     transition:none !important;
@@ -304,6 +305,9 @@
     background: rgba(255,255,255,.14);
     border-bottom:1px solid rgba(255,255,255,.14);
     cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:none;
   }
 
   .traffic{ display:flex; gap:8px; align-items:center; }
@@ -498,7 +502,7 @@
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
     box-shadow: 0 30px 90px rgba(0,0,0,.45);
-    z-index:60;
+    z-index:4000;
     align-items:flex-end;
   }
 
@@ -510,6 +514,7 @@
     display:grid;
     place-items:center;
     position:relative;
+
     transform: translateY(var(--lift, 0px)) scale(var(--scale, 1));
     transform-origin: 50% 100%;
     transition: background .12s ease;
@@ -558,7 +563,7 @@
     opacity:0;
     pointer-events:none;
     transition: .18s ease;
-    z-index:200;
+    z-index:4500;
   }
   .appicon.showPopup .dockPopup{
     opacity:1;
@@ -615,6 +620,10 @@
     .dock{ gap:8px; padding:8px 10px; }
     .appicon{ width:42px; height:42px; border-radius:13px; }
     .dockPopup{ width: 220px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .menuWrap, .logo { transition:none !important; }
   }
 </style>
 </head>
@@ -864,7 +873,7 @@
 
 <script>
   // ======= LINKI =======
-  const IG_GUMIS = "https://instagram.com/tokarz_k";
+  const IG_GUMIS   = "https://instagram.com/tokarz_k";
   const IG_GODWIFI = "https://instagram.com/god.wifi";
   const SPOTIFY_URL = "https://open.spotify.com/artist/6iz52ADwFl483ghAI7NuS1?si=V1A-TzIoRNqL1iQ_ptCGng";
   const DISCORD_URL = "https://discord.gg/4PTQRsUq9t";
@@ -891,15 +900,19 @@
   const batteryBoltEl = document.getElementById("batteryBolt");
 
   function batteryModelByHour(h){
+    // 08:00 -> 100%
+    // 16:00 -> ~50%
+    // wieczór -> nisko
+    // po 22:00 -> ładowanie ⚡
     let pct = 100;
     let charging = false;
 
     if (h >= 22 || h < 6){
       charging = true;
-      const t = (h >= 22) ? (h - 22) : (h + 2);
+      const t = (h >= 22) ? (h - 22) : (h + 2); // 22..23 => 0..1, 0..5 => 2..7
       pct = Math.min(95, 20 + t * 10);
     } else if (h >= 16){
-      const t = (h - 16) / 6;
+      const t = (h - 16) / 6; // 0..1
       pct = Math.round(50 - t * 38);
     } else if (h >= 8){
       const t = (h - 8) / 8;
@@ -1002,31 +1015,26 @@
     });
   });
 
-  // ======= Window system =======
+  // ======= Window system (FIX: center + draggable + toggle + no frozen transforms) =======
   const stage = document.getElementById("stage");
 
   function rectCenter(r){ return { x: r.left + r.width/2, y: r.top + r.height/2 }; }
 
-  function ensureStageActive(){
-    const anyOpen = Array.from(document.querySelectorAll(".app")).some(w => w.classList.contains("open"));
-    stage.classList.toggle("active", anyOpen);
-  }
-
-  let zCounter = 80;
+  let zCounter = 2100;
   function bringToFront(win){
     zCounter += 1;
     win.style.zIndex = String(zCounter);
   }
 
   function centerWindow(win){
-    // reset offsetów
+    // reset offsetów na środek
     win.style.setProperty("--x", "0px");
     win.style.setProperty("--y", "0px");
 
-    // po layout: pilnujemy, żeby titlebar nie wchodził pod menubar
+    // dopilnuj, żeby titlebar nie wszedł pod menubar
     requestAnimationFrame(() => {
       const r = win.getBoundingClientRect();
-      const topSafe = 32 + 10; // menubar + margines
+      const topSafe = 32 + 10;
       if (r.top < topSafe){
         const dy = topSafe - r.top;
         const curY = parseFloat(getComputedStyle(win).getPropertyValue("--y")) || 0;
@@ -1034,150 +1042,93 @@
       }
     });
   }
-function openWindow(win, fromEl){
-  // TOGGLE: jeśli już otwarte -> zamknij do ikonki
-  if (win.classList.contains("open")){
-    minimizeWindow(win, fromEl);
-    return;
+
+  function openWindow(win, fromEl){
+    // TOGGLE: drugi klik w ikonę zamyka
+    if (win.classList.contains("open")){
+      minimizeWindow(win, fromEl);
+      return;
+    }
+
+    bringToFront(win);
+    win.getAnimations().forEach(a => a.cancel());
+
+    win.classList.add("open");
+    centerWindow(win);
+
+    if (prefersReduced) return;
+
+    win.style.visibility = "hidden";
+    requestAnimationFrame(() => {
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = win.getBoundingClientRect();
+      win.style.visibility = "visible";
+
+      const startScale = Math.min(fromRect.width/toRect.width, fromRect.height/toRect.height);
+
+      const anim = win.animate([
+        {
+          transform: `translate(-50%, -50%) translate(${(fromRect.left+fromRect.width/2)-(toRect.left+toRect.width/2)}px,
+                                                    ${(fromRect.top+fromRect.height/2)-(toRect.top+toRect.height/2)}px)
+                     scale(${startScale})`,
+          opacity: 0.0
+        },
+        { transform: "translate(-50%, -50%) translate(0px, 0px) scale(1)", opacity: 1.0 }
+      ], {
+        duration: 320,
+        easing: "cubic-bezier(.2,.9,.2,1)"
+      });
+
+      anim.onfinish = () => {
+        anim.cancel();     // ważne: nie zostawiaj zamrożonego transformu
+        centerWindow(win); // dociągnij do środka
+      };
+    });
   }
 
-  bringToFront(win);
+  function minimizeWindow(win, toEl){
+    if (!win.classList.contains("open")) return;
 
-  // usuń wszystkie animacje które mogły “zamrozić” transform
-  win.getAnimations().forEach(a => a.cancel());
+    win.getAnimations().forEach(a => a.cancel());
 
-  // pokaż od razu (żeby policzyć rozmiary)
-  win.classList.add("open");
-  ensureStageActive();
+    if (prefersReduced){
+      win.classList.remove("open");
+      win.style.setProperty("--x", "0px");
+      win.style.setProperty("--y", "0px");
+      return;
+    }
 
-  // wycentruj zawsze po otwarciu
-  centerWindow(win);
+    const fromRect = win.getBoundingClientRect();
+    const toRect = toEl.getBoundingClientRect();
 
-  if (prefersReduced) return;
+    const fromC = rectCenter(fromRect);
+    const toC = rectCenter(toRect);
 
-  // animacja "z ikonki" (UWAGA: bez fill:"both" + na końcu cancel)
-  win.style.visibility = "hidden";
-  requestAnimationFrame(() => {
-    const fromRect = fromEl.getBoundingClientRect();
-    const toRect = win.getBoundingClientRect();
-    win.style.visibility = "visible";
+    const dx = toC.x - fromC.x;
+    const dy = toC.y - fromC.y;
 
-    const startScale = Math.min(fromRect.width/toRect.width, fromRect.height/toRect.height);
+    const s = Math.min(
+      Math.max(0.15, toRect.width / fromRect.width),
+      Math.max(0.15, toRect.height / fromRect.height)
+    );
 
     const anim = win.animate([
-      {
-        transform: `translate(${(fromRect.left+fromRect.width/2)-(toRect.left+toRect.width/2)}px,
-                            ${(fromRect.top+fromRect.height/2)-(toRect.top+toRect.height/2)}px)
-                  scale(${startScale})`,
-        opacity: 0.0
-      },
-      { transform: "translate(0px, 0px) scale(1)", opacity: 1.0 }
+      { transform: "translate(-50%, -50%) translate(0px, 0px) scale(1)", opacity: 1.0 },
+      { transform: `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(${s})`, opacity: 0.0 }
     ], {
-      duration: 320,
+      duration: 260,
       easing: "cubic-bezier(.2,.9,.2,1)"
     });
 
     anim.onfinish = () => {
-      anim.cancel();       // <— KLUCZ: nie zostawiaj transformu z animacji
-      centerWindow(win);   // dopnij do środka + topSafe
+      anim.cancel();
+      win.classList.remove("open");
+      win.style.setProperty("--x", "0px");
+      win.style.setProperty("--y", "0px");
     };
-  });
-}
+  }
 
- 
-
-  // ======= App window controls =======
-  const app = document.getElementById("app");
-  const appLauncher = document.getElementById("appLauncher");
-  const appMin = document.getElementById("appMin");
-  const appClose = document.getElementById("appClose");
-  const appMax = document.getElementById("appMax");
-  let appMaxed = false;
-
-  appLauncher.addEventListener("click", (e)=>{
-    e.stopPropagation(); closeAllMenus(); closeIgPopup();
-    openWindow(app, appLauncher);
-  });
-  appMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
-  appClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
-  appMax.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    if(!app.classList.contains("open")) return;
-    appMaxed=!appMaxed;
-    app.style.width = appMaxed ? "min(860px, 96vw)" : "min(560px, 92vw)";
-    centerWindow(app);
-  });
-
-  // ======= Finder root controls =======
-  const folderLauncher = document.getElementById("folderLauncher");
-  const finderWin = document.getElementById("finderWin");
-  const finderMin = document.getElementById("finderMin");
-  const finderClose = document.getElementById("finderClose");
-  const finderMax = document.getElementById("finderMax");
-  let finderMaxed = false;
-
-  folderLauncher.addEventListener("click", (e)=>{
-    e.stopPropagation(); closeAllMenus(); closeIgPopup();
-    openWindow(finderWin, folderLauncher);
-  });
-  finderMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
-  finderClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
-  finderMax.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    if(!finderWin.classList.contains("open")) return;
-    finderMaxed=!finderMaxed;
-    finderWin.style.width = finderMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
-    centerWindow(finderWin);
-  });
-
-  // ======= Finder: koncert window =======
-  const openKoncert = document.getElementById("openKoncert");
-  const koncertWin = document.getElementById("koncertWin");
-  const koncertMin = document.getElementById("koncertMin");
-  const koncertClose = document.getElementById("koncertClose");
-  const koncertMax = document.getElementById("koncertMax");
-  let koncertMaxed = false;
-
-  openKoncert.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    openWindow(koncertWin, openKoncert);
-  });
-  koncertMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
-  koncertClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
-  koncertMax.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    if(!koncertWin.classList.contains("open")) return;
-    koncertMaxed=!koncertMaxed;
-    koncertWin.style.width = koncertMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
-    centerWindow(koncertWin);
-  });
-
-  // ======= Wi-Fi click -> Game =======
-  const wifiBtn = document.getElementById("wifiBtn");
-  const gameWin = document.getElementById("gameWin");
-  const gameMin = document.getElementById("gameMin");
-  const gameClose = document.getElementById("gameClose");
-  const gameMax = document.getElementById("gameMax");
-  let gameMaxed = false;
-
-  wifiBtn.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    closeAllMenus(); closeIgPopup(); setOpen(false);
-    openWindow(gameWin, wifiBtn);
-    startOrResumeGame();
-  });
-
-  gameMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
-  gameClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
-  gameMax.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    if(!gameWin.classList.contains("open")) return;
-    gameMaxed=!gameMaxed;
-    gameWin.style.width = gameMaxed ? "min(980px, 98vw)" : "min(760px, 96vw)";
-    centerWindow(gameWin);
-  });
-
-  // ======= Dragging for ANY window =======
+  // ======= Draggable (działa dla każdego okna) =======
   function makeDraggable(titlebarEl){
     const id = titlebarEl.getAttribute("data-drag");
     const win = document.getElementById(id);
@@ -1215,14 +1166,14 @@ function openWindow(win, fromEl){
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // clamp: nie wylatuj poza ekran
+      // nie pozwól odjechać poza ekran
       const maxX = (window.innerWidth / 2) - 60;
       const maxY = (window.innerHeight / 2) - 60;
 
       let nx = clamp(baseX + dx, -maxX, maxX);
       let ny = clamp(baseY + dy, -maxY, maxY);
 
-      // clamp pod menubar:
+      // pod menubarem bezpiecznie
       const r = win.getBoundingClientRect();
       const topSafe = 32 + 8;
       if (r.top + dy < topSafe){
@@ -1245,6 +1196,91 @@ function openWindow(win, fromEl){
 
   document.querySelectorAll(".titlebar[data-drag]").forEach(makeDraggable);
 
+  // ======= Okna: kontrolki + launchery (klik w ikonę = toggle) =======
+  const app = document.getElementById("app");
+  const appLauncher = document.getElementById("appLauncher");
+  const appMin = document.getElementById("appMin");
+  const appClose = document.getElementById("appClose");
+  const appMax = document.getElementById("appMax");
+  let appMaxed = false;
+
+  appLauncher.addEventListener("click", (e)=>{ e.stopPropagation(); closeAllMenus(); closeIgPopup(); openWindow(app, appLauncher); });
+  appMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
+  appClose.addEventListener("click",(e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
+  appMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!app.classList.contains("open")) return;
+    appMaxed=!appMaxed;
+    app.style.width = appMaxed ? "min(860px, 96vw)" : "min(560px, 92vw)";
+    centerWindow(app);
+  });
+
+  const folderLauncher = document.getElementById("folderLauncher");
+  const finderWin = document.getElementById("finderWin");
+  const finderMin = document.getElementById("finderMin");
+  const finderClose = document.getElementById("finderClose");
+  const finderMax = document.getElementById("finderMax");
+  let finderMaxed = false;
+
+  folderLauncher.addEventListener("click", (e)=>{ e.stopPropagation(); closeAllMenus(); closeIgPopup(); openWindow(finderWin, folderLauncher); });
+  finderMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
+  finderClose.addEventListener("click",(e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
+  finderMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!finderWin.classList.contains("open")) return;
+    finderMaxed=!finderMaxed;
+    finderWin.style.width = finderMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
+    centerWindow(finderWin);
+  });
+
+  const openKoncert = document.getElementById("openKoncert");
+  const koncertWin = document.getElementById("koncertWin");
+  const koncertMin = document.getElementById("koncertMin");
+  const koncertClose = document.getElementById("koncertClose");
+  const koncertMax = document.getElementById("koncertMax");
+  let koncertMaxed = false;
+
+  openKoncert.addEventListener("click", (e)=>{ e.stopPropagation(); openWindow(koncertWin, openKoncert); });
+  koncertMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
+  koncertClose.addEventListener("click",(e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
+  koncertMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!koncertWin.classList.contains("open")) return;
+    koncertMaxed=!koncertMaxed;
+    koncertWin.style.width = koncertMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
+    centerWindow(koncertWin);
+  });
+
+  const wifiBtn = document.getElementById("wifiBtn");
+  const gameWin = document.getElementById("gameWin");
+  const gameMin = document.getElementById("gameMin");
+  const gameClose = document.getElementById("gameClose");
+  const gameMax = document.getElementById("gameMax");
+  let gameMaxed = false;
+
+  wifiBtn.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    closeAllMenus(); closeIgPopup(); setOpen(false);
+    openWindow(gameWin, wifiBtn);
+    startOrResumeGame();
+  });
+  gameMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
+  gameClose.addEventListener("click",(e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
+  gameMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!gameWin.classList.contains("open")) return;
+    gameMaxed=!gameMaxed;
+    gameWin.style.width = gameMaxed ? "min(980px, 98vw)" : "min(760px, 96vw)";
+    centerWindow(gameWin);
+  });
+
+  // Dysk na pulpicie (placeholder — możesz tu dać swój action)
+  document.getElementById("driveLauncher").addEventListener("click", (e)=>{
+    e.stopPropagation();
+    // np. nic, albo otwieraj finderWin:
+    openWindow(finderWin, document.getElementById("driveLauncher"));
+  });
+
   // ======= Click outside closes popups/menus =======
   document.addEventListener("click", (e)=>{
     if (!dockIg.contains(e.target)) closeIgPopup();
@@ -1258,6 +1294,11 @@ function openWindow(win, fromEl){
       closeAllMenus();
       setOpen(false);
     }
+  });
+
+  // po resize dociągnij otwarte okna żeby nie weszły pod menubar
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".app.open").forEach(centerWindow);
   });
 
   // ======= Dock magnification (bez nachodzenia) =======
@@ -1324,14 +1365,9 @@ function openWindow(win, fromEl){
   const G = 0.9;
   const groundY = 210;
 
-  const player = {
-    x: 90, y: groundY, w: 26, h: 34,
-    vy: 0,
-    onGround: true
-  };
-
+  const player = { x: 90, y: groundY, w: 26, h: 34, vy: 0, onGround: true };
   let obstacles = [];
-  let speed = 5.2;
+  let speed = 6.2;
   let score = 0;
   let spawnTimer = 0;
 
@@ -1352,11 +1388,7 @@ function openWindow(win, fromEl){
   function spawnObstacle(){
     const h = 18 + Math.random()*22;
     const w = 14 + Math.random()*20;
-    obstacles.push({
-      x: canvas.width + 30,
-      y: groundY + (34 - h),
-      w, h
-    });
+    obstacles.push({ x: canvas.width + 30, y: groundY + (34 - h), w, h });
   }
 
   function jump(){
@@ -1369,10 +1401,7 @@ function openWindow(win, fromEl){
   }
 
   function collide(a,b){
-    return (a.x < b.x + b.w &&
-            a.x + a.w > b.x &&
-            a.y < b.y + b.h &&
-            a.y + a.h > b.y);
+    return (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
   }
 
   function draw(){
@@ -1469,9 +1498,6 @@ function openWindow(win, fromEl){
 
   resetGame();
   requestAnimationFrame(step);
-
-  // start: everything closed
-  ensureStageActive();
 </script>
 
 </body>
