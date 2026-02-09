@@ -262,7 +262,7 @@
     position:fixed;
     inset:0;
     z-index:2000;
-    pointer-events:none; /* okna dostają pointer-events */
+    pointer-events:none; 
   }
 
   .app{
@@ -1031,7 +1031,7 @@
     win.style.setProperty("--x", "0px");
     win.style.setProperty("--y", "0px");
 
-    // dopilnuj, żeby titlebar nie wszedł pod menubar
+   
     requestAnimationFrame(() => {
       const r = win.getBoundingClientRect();
       const topSafe = 32 + 10;
@@ -1080,8 +1080,8 @@
       });
 
       anim.onfinish = () => {
-        anim.cancel();     // ważne: nie zostawiaj zamrożonego transformu
-        centerWindow(win); // dociągnij do środka
+        anim.cancel();     
+        centerWindow(win); 
       };
     });
   }
@@ -1166,14 +1166,14 @@
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // nie pozwól odjechać poza ekran
+     
       const maxX = (window.innerWidth / 2) - 60;
       const maxY = (window.innerHeight / 2) - 60;
 
       let nx = clamp(baseX + dx, -maxX, maxX);
       let ny = clamp(baseY + dy, -maxY, maxY);
 
-      // pod menubarem bezpiecznie
+      
       const r = win.getBoundingClientRect();
       const topSafe = 32 + 8;
       if (r.top + dy < topSafe){
@@ -1274,10 +1274,10 @@
     centerWindow(gameWin);
   });
 
-  // Dysk na pulpicie (placeholder — możesz tu dać swój action)
+  // Dysk na pulpicie 
   document.getElementById("driveLauncher").addEventListener("click", (e)=>{
     e.stopPropagation();
-    // np. nic, albo otwieraj finderWin:
+  
     openWindow(finderWin, document.getElementById("driveLauncher"));
   });
 
@@ -1296,7 +1296,7 @@
     }
   });
 
-  // po resize dociągnij otwarte okna żeby nie weszły pod menubar
+  
   window.addEventListener("resize", () => {
     document.querySelectorAll(".app.open").forEach(centerWindow);
   });
@@ -1351,7 +1351,7 @@
     });
   });
 
-  // ======= Dino-like runner game (custom) =======
+  // ======= Dino-like runner game =======
   const canvas = document.getElementById("dinoCanvas");
   const ctx = canvas.getContext("2d");
   const scoreEl = document.getElementById("score");
