@@ -126,9 +126,7 @@
     -webkit-backdrop-filter: blur(18px);
     display:none;
   }
-  .menuItem.active .dropdown{
-    display:block;
-  }
+  .menuItem.active .dropdown{ display:block; }
   .dropdown a, .dropdown button{
     display:flex;
     width:100%;
@@ -462,13 +460,8 @@
   }
 
   /* ===== Game window ===== */
-  .app.game{
-    width: min(760px, 96vw);
-  }
-  .gameWrap{
-    padding: 14px 18px 18px;
-    text-align:left;
-  }
+  .app.game{ width: min(760px, 96vw); }
+  .gameWrap{ padding: 14px 18px 18px; text-align:left; }
   .gameTop{
     display:flex;
     align-items:center;
@@ -488,11 +481,7 @@
     box-shadow: 0 18px 44px rgba(0,0,0,.30);
     backdrop-filter: blur(10px);
   }
-  .gameHint{
-    margin-top:10px;
-    font-size:12px;
-    opacity:.75;
-  }
+  .gameHint{ margin-top:10px; font-size:12px; opacity:.75; }
 
   /* ===== Dock ===== */
   .dock{
@@ -620,10 +609,7 @@
     opacity:.95;
     pointer-events:none;
   }
-  .dockItemHint{
-    font-size:12px;
-    opacity:.65;
-  }
+  .dockItemHint{ font-size:12px; opacity:.65; }
 
   @media (max-width:420px){
     .dock{ gap:8px; padding:8px 10px; }
@@ -905,19 +891,15 @@
   const batteryBoltEl = document.getElementById("batteryBolt");
 
   function batteryModelByHour(h){
-    // 08:00 -> 100%
-    // 16:00 -> ~50%
-    // 22:00 -> ~12%
-    // po 22:00 -> ładowanie ⚡
     let pct = 100;
     let charging = false;
 
     if (h >= 22 || h < 6){
       charging = true;
-      const t = (h >= 22) ? (h - 22) : (h + 2); // 22..23 => 0..1, 0..5 => 2..7
+      const t = (h >= 22) ? (h - 22) : (h + 2);
       pct = Math.min(95, 20 + t * 10);
     } else if (h >= 16){
-      const t = (h - 16) / 6; // 0..1
+      const t = (h - 16) / 6;
       pct = Math.round(50 - t * 38);
     } else if (h >= 8){
       const t = (h - 8) / 8;
@@ -1020,7 +1002,7 @@
     });
   });
 
-  // ======= Window system: open/minimize like macOS =======
+  // ======= Window system =======
   const stage = document.getElementById("stage");
 
   function rectCenter(r){ return { x: r.left + r.width/2, y: r.top + r.height/2 }; }
@@ -1030,39 +1012,64 @@
     stage.classList.toggle("active", anyOpen);
   }
 
+  let zCounter = 80;
   function bringToFront(win){
-    // proste: ustaw z-index wyżej niż reszta
-    const base = 30;
-    const z = base + Math.floor(Math.random() * 1000);
-    win.style.zIndex = String(z);
+    zCounter += 1;
+    win.style.zIndex = String(zCounter);
+  }
+
+  function centerWindow(win){
+    // reset offsetów
+    win.style.setProperty("--x", "0px");
+    win.style.setProperty("--y", "0px");
+
+    // po layout: pilnujemy, żeby titlebar nie wchodził pod menubar
+    requestAnimationFrame(() => {
+      const r = win.getBoundingClientRect();
+      const topSafe = 32 + 10; // menubar + margines
+      if (r.top < topSafe){
+        const dy = topSafe - r.top;
+        const curY = parseFloat(getComputedStyle(win).getPropertyValue("--y")) || 0;
+        win.style.setProperty("--y", (curY + dy) + "px");
+      }
+    });
   }
 
   function openWindow(win, fromEl){
-    if (win.classList.contains("open")) { bringToFront(win); ensureStageActive(); return; }
-
     bringToFront(win);
+
+    // pokaż od razu (żeby mieć poprawne wymiary)
     win.classList.add("open");
     ensureStageActive();
 
+    // zawsze na środek po otwarciu
+    centerWindow(win);
+
     if (prefersReduced) return;
 
+    // animacja "z ikonki"
     win.style.visibility = "hidden";
-    win.style.opacity = "1";
-    win.style.transform = "translate3d(0,0,0) scale(1)";
-
     requestAnimationFrame(() => {
       const fromRect = fromEl.getBoundingClientRect();
       const toRect = win.getBoundingClientRect();
       win.style.visibility = "visible";
 
       win.animate([
-        { transform: `translate(${(fromRect.left+fromRect.width/2)-(toRect.left+toRect.width/2)}px, ${(fromRect.top+fromRect.height/2)-(toRect.top+toRect.height/2)}px) scale(${Math.min(fromRect.width/toRect.width, fromRect.height/toRect.height)})`, opacity: 0.0 },
+        {
+          transform: `translate(${(fromRect.left+fromRect.width/2)-(toRect.left+toRect.width/2)}px,
+                              ${(fromRect.top+fromRect.height/2)-(toRect.top+toRect.height/2)}px)
+                    scale(${Math.min(fromRect.width/toRect.width, fromRect.height/toRect.height)})`,
+          opacity: 0.0
+        },
         { transform: "translate(0px, 0px) scale(1)", opacity: 1.0 }
       ], {
         duration: 360,
         easing: "cubic-bezier(.2,.9,.2,1)",
         fill: "both"
-      });
+      }).onfinish = () => {
+        // po animacji jeszcze raz dociągnij środek
+        centerWindow(win);
+      };
     });
   }
 
@@ -1100,6 +1107,9 @@
 
     anim.onfinish = () => {
       win.classList.remove("open");
+      // reset offsetów po zamknięciu
+      win.style.setProperty("--x", "0px");
+      win.style.setProperty("--y", "0px");
       ensureStageActive();
     };
   }
@@ -1112,10 +1122,19 @@
   const appMax = document.getElementById("appMax");
   let appMaxed = false;
 
-  appLauncher.addEventListener("click", (e)=>{ e.stopPropagation(); closeAllMenus(); closeIgPopup(); openWindow(app, appLauncher); });
+  appLauncher.addEventListener("click", (e)=>{
+    e.stopPropagation(); closeAllMenus(); closeIgPopup();
+    openWindow(app, appLauncher);
+  });
   appMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
   appClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(app, appLauncher); setOpen(false); });
-  appMax.addEventListener("click", (e)=>{ e.stopPropagation(); if(!app.classList.contains("open")) return; appMaxed=!appMaxed; app.style.width = appMaxed ? "min(860px, 96vw)" : "min(560px, 92vw)"; });
+  appMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!app.classList.contains("open")) return;
+    appMaxed=!appMaxed;
+    app.style.width = appMaxed ? "min(860px, 96vw)" : "min(560px, 92vw)";
+    centerWindow(app);
+  });
 
   // ======= Finder root controls =======
   const folderLauncher = document.getElementById("folderLauncher");
@@ -1125,10 +1144,19 @@
   const finderMax = document.getElementById("finderMax");
   let finderMaxed = false;
 
-  folderLauncher.addEventListener("click", (e)=>{ e.stopPropagation(); closeAllMenus(); closeIgPopup(); openWindow(finderWin, folderLauncher); });
+  folderLauncher.addEventListener("click", (e)=>{
+    e.stopPropagation(); closeAllMenus(); closeIgPopup();
+    openWindow(finderWin, folderLauncher);
+  });
   finderMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
   finderClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(finderWin, folderLauncher); });
-  finderMax.addEventListener("click", (e)=>{ e.stopPropagation(); if(!finderWin.classList.contains("open")) return; finderMaxed=!finderMaxed; finderWin.style.width = finderMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)"; });
+  finderMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!finderWin.classList.contains("open")) return;
+    finderMaxed=!finderMaxed;
+    finderWin.style.width = finderMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
+    centerWindow(finderWin);
+  });
 
   // ======= Finder: koncert window =======
   const openKoncert = document.getElementById("openKoncert");
@@ -1140,11 +1168,17 @@
 
   openKoncert.addEventListener("click", (e)=>{
     e.stopPropagation();
-    openWindow(koncertWin, openKoncert); // animuje „z tej ikonki w Finderze”
+    openWindow(koncertWin, openKoncert);
   });
   koncertMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
   koncertClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(koncertWin, openKoncert); });
-  koncertMax.addEventListener("click", (e)=>{ e.stopPropagation(); if(!koncertWin.classList.contains("open")) return; koncertMaxed=!koncertMaxed; koncertWin.style.width = koncertMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)"; });
+  koncertMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!koncertWin.classList.contains("open")) return;
+    koncertMaxed=!koncertMaxed;
+    koncertWin.style.width = koncertMaxed ? "min(980px, 96vw)" : "min(680px, 92vw)";
+    centerWindow(koncertWin);
+  });
 
   // ======= Wi-Fi click -> Game =======
   const wifiBtn = document.getElementById("wifiBtn");
@@ -1163,12 +1197,19 @@
 
   gameMin.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
   gameClose.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(gameWin, wifiBtn); });
-  gameMax.addEventListener("click", (e)=>{ e.stopPropagation(); if(!gameWin.classList.contains("open")) return; gameMaxed=!gameMaxed; gameWin.style.width = gameMaxed ? "min(980px, 98vw)" : "min(760px, 96vw)"; });
+  gameMax.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if(!gameWin.classList.contains("open")) return;
+    gameMaxed=!gameMaxed;
+    gameWin.style.width = gameMaxed ? "min(980px, 98vw)" : "min(760px, 96vw)";
+    centerWindow(gameWin);
+  });
 
   // ======= Dragging for ANY window =======
   function makeDraggable(titlebarEl){
     const id = titlebarEl.getAttribute("data-drag");
     const win = document.getElementById(id);
+
     let dragging = false;
     let startX = 0, startY = 0;
     let baseX = 0, baseY = 0;
@@ -1185,25 +1226,36 @@
 
       dragging = true;
       bringToFront(win);
+
       titlebarEl.setPointerCapture(e.pointerId);
       win.classList.add("dragging");
 
       startX = e.clientX;
       startY = e.clientY;
+
       baseX = getVarPx("--x");
       baseY = getVarPx("--y");
     });
 
     titlebarEl.addEventListener("pointermove", (e)=>{
       if (!dragging) return;
+
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
+      // clamp: nie wylatuj poza ekran
       const maxX = (window.innerWidth / 2) - 60;
-      const maxY = (window.innerHeight / 2) - 80;
+      const maxY = (window.innerHeight / 2) - 60;
 
-      const nx = clamp(baseX + dx, -maxX, maxX);
-      const ny = clamp(baseY + dy, -maxY, maxY);
+      let nx = clamp(baseX + dx, -maxX, maxX);
+      let ny = clamp(baseY + dy, -maxY, maxY);
+
+      // clamp pod menubar:
+      const r = win.getBoundingClientRect();
+      const topSafe = 32 + 8;
+      if (r.top + dy < topSafe){
+        ny += (topSafe - (r.top + dy));
+      }
 
       win.style.setProperty("--x", nx + "px");
       win.style.setProperty("--y", ny + "px");
@@ -1216,7 +1268,6 @@
     titlebarEl.addEventListener("pointerup", stop);
     titlebarEl.addEventListener("pointercancel", stop);
 
-    // focus on click
     win.addEventListener("pointerdown", ()=> bringToFront(win));
   }
 
@@ -1226,8 +1277,6 @@
   document.addEventListener("click", (e)=>{
     if (!dockIg.contains(e.target)) closeIgPopup();
     closeAllMenus();
-
-    // klik poza oknami zamyka tylko listę w app
     if (app.classList.contains("open") && !app.contains(e.target)) setOpen(false);
   });
 
@@ -1239,7 +1288,7 @@
     }
   });
 
-  // ======= Dock magnification (bez nachodzenia) =======
+  // ======= Dock magnification  =======
   const dock = document.getElementById("dock");
   const dockIcons = Array.from(dock.querySelectorAll(".appicon"));
 
@@ -1357,7 +1406,6 @@
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // horizon / glass
     ctx.globalAlpha = 0.9;
     ctx.beginPath();
     ctx.moveTo(0, groundY+34);
@@ -1367,15 +1415,12 @@
     ctx.stroke();
     ctx.globalAlpha = 1;
 
-    // player (simple)
     ctx.fillStyle = "rgba(255,255,255,.92)";
     ctx.fillRect(player.x, player.y, player.w, player.h);
 
-    // obstacles
     ctx.fillStyle = "rgba(255,255,255,.65)";
     obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
 
-    // small clouds
     ctx.globalAlpha = 0.12;
     for (let i=0;i<4;i++){
       const cx = (i*260 + (score*2)%260);
@@ -1394,7 +1439,6 @@
       return;
     }
 
-    // physics
     player.vy += G;
     player.y += player.vy;
 
@@ -1404,18 +1448,15 @@
       player.onGround = true;
     }
 
-    // spawn
     spawnTimer -= 1;
     if (spawnTimer <= 0){
       spawnObstacle();
       spawnTimer = 55 + Math.random()*45;
     }
 
-    // move obstacles
     obstacles.forEach(o => o.x -= speed);
     obstacles = obstacles.filter(o => o.x + o.w > -20);
 
-    // collisions
     for (const o of obstacles){
       if (collide(player, o)){
         dead = true;
@@ -1427,7 +1468,6 @@
       }
     }
 
-    // scoring
     score += 0.18;
     scoreEl.textContent = String(Math.floor(score));
     speed += 0.0022;
@@ -1447,7 +1487,6 @@
     }
   }
 
-  // controls
   window.addEventListener("keydown", (e)=>{
     if (e.code === "Space" || e.code === "ArrowUp"){
       e.preventDefault();
