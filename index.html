@@ -1280,6 +1280,70 @@
         <audio id="mixAudio" preload="metadata"></audio>
       </div>
     </section>
+    <!-- ===== DRIVE window ===== -->
+<section class="app finder" id="driveWin" aria-label="Dysk">
+  <div class="titlebar" data-drag="driveWin">
+    <div class="traffic" aria-label="Sterowanie oknem">
+      <button class="dot red" id="driveClose" type="button" aria-label="Zamknij"></button>
+      <button class="dot yellow" id="driveMin" type="button" aria-label="Minimalizuj"></button>
+      <button class="dot green" id="driveMax" type="button" aria-label="Powiększ"></button>
+    </div>
+    <div class="title">Dysk</div>
+    <div style="width:52px;"></div>
+  </div>
+
+  <div class="finderPath">~/Dysk</div>
+  <div class="finderBody">
+    <div class="finderGrid" aria-label="Zawartość dysku">
+      <button class="finderItem" type="button" id="openIcloudPhotos">
+        <img src="photos.png" alt="" class="finderIcon">
+        <span>Galeria iCloud</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== iCloud Photos window ===== -->
+<section class="app finder" id="photosWin" aria-label="iCloud Photos">
+  <div class="titlebar" data-drag="photosWin">
+    <div class="traffic" aria-label="Sterowanie oknem">
+      <button class="dot red" id="photosClose" type="button" aria-label="Zamknij"></button>
+      <button class="dot yellow" id="photosMin" type="button" aria-label="Minimalizuj"></button>
+      <button class="dot green" id="photosMax" type="button" aria-label="Powiększ"></button>
+    </div>
+    <div class="title">iCloud Photos</div>
+    <div style="width:52px;"></div>
+  </div>
+
+  <div class="icloudTop">
+    <div class="icloudLeft">
+      <div class="icloudH1">Zdjęcia</div>
+      <div class="icloudTabs">
+        <button class="icloudTab active" data-tab="recent">Ostatnie</button>
+        <button class="icloudTab" data-tab="albums">Albumy</button>
+        <button class="icloudTab" data-tab="shared">Udostępnione</button>
+      </div>
+    </div>
+
+    <input class="icloudSearch" id="icloudSearch" placeholder="Szukaj">
+  </div>
+
+  <div class="icloudGrid" id="icloudGrid"></div>
+</section>
+
+<!-- ===== iCloud viewer (full) ===== -->
+<div class="icloudViewer" id="icloudViewer" aria-hidden="true">
+  <div class="icloudViewerTop">
+    <button class="icloudViewerBtn" id="icloudViewerClose" type="button">Gotowe</button>
+    <div class="icloudViewerTitle" id="icloudViewerTitle">Zdjęcie</div>
+    <div style="width:72px;"></div>
+  </div>
+
+  <div class="icloudViewerBody">
+    <img id="icloudViewerImg" alt="">
+  </div>
+</div>
+
 
     <!-- Game window -->
     <section class="app game" id="gameWin" aria-label="Gra">
