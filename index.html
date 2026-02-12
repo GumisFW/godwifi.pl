@@ -1441,6 +1441,63 @@
   }
 </script>
 <script>
+  // ===== Mobile blocker (unknown device) =====
+(function(){
+  const block = document.getElementById("mobileBlock");
+  if (!block) return;
+
+  const meta = document.getElementById("mobileMeta");
+  const btnCopy = document.getElementById("copyLinkBtn");
+  const btnContinue = document.getElementById("continueAnywayBtn");
+
+  const ua = navigator.userAgent || "";
+  const isTouch = navigator.maxTouchPoints > 0;
+  const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 820;
+
+  // wykrywanie "telefon/tablet" 
+  const isMobileLike = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || (isTouch && smallScreen);
+
+  function show(){
+    block.style.display = "block";
+   
+    document.body.style.overflow = "hidden";
+  }
+
+  function hide(){
+    block.style.display = "none";
+    document.body.style.overflow = "hidden";
+  }
+
+  if (isMobileLike){
+    const device = /iPhone|iPad|iPod/i.test(ua) ? "iOS" :
+                   /Android/i.test(ua) ? "Android" :
+                   "Mobile";
+    meta.textContent = `Wykryto: ${device} · ${window.innerWidth}×${window.innerHeight}`;
+    show();
+  }
+
+  btnContinue?.addEventListener("click", () => hide());
+
+  btnCopy?.addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(location.href);
+      btnCopy.textContent = "Skopiowano ✅";
+      setTimeout(()=> btnCopy.textContent = "Skopiuj link", 1400);
+    }catch(e){
+      // fallback
+      prompt("Skopiuj link:", location.href);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    
+    if (!block) return;
+    const small = Math.min(window.innerWidth, window.innerHeight) <= 820;
+    const mobileNow = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent || "") || (navigator.maxTouchPoints > 0 && small);
+    if (mobileNow) show();
+  });
+})();
+
   // ===== LINKS =====
   const IG_GUMIS = "https://instagram.com/tokarz_k";
   const IG_GODWIFI = "https://instagram.com/god.wifi";
