@@ -307,13 +307,13 @@
     position:fixed;
     inset:0;
     z-index:200;
-    pointer-events:none; /* okna mają pointer-events same */
+    pointer-events:none; 
   }
 
   .app{
     position:fixed;
     left:50%;
-    top: calc(50% + 14px); /* drobny offset w dół jak macOS */
+    top: calc(50% + 14px); 
     width:min(560px, 92vw);
     border-radius:22px;
     overflow:hidden;
@@ -696,7 +696,7 @@
     .dockPopup{ width: 220px; }
   }
 
-  /* ===== macOS MIX PLAYER (no covers) ===== */
+  /* ===== macOS MIX PLAYER===== */
   .player{
     padding: 18px 18px 20px;
     text-align:left;
@@ -891,7 +891,7 @@
 
       <div class="menuItem" data-menu="help">Pomoc
         <div class="dropdown" role="menu" aria-label="Pomoc">
-          <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Instagram god wifi</a>
+          <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Instagram god.wifi</a>
           <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Instagram Gumisia</a>
         </div>
       </div>
@@ -1006,7 +1006,7 @@
         <div class="menuWrap" id="menuWrap">
           <nav class="menu" aria-label="Linki">
             <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Sprawdź Instagram Gumisia</a>
-            <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Sprawdź Instagram god wifi</a>
+            <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Sprawdź Instagram god.wifi</a>
             <a id="spotifyLink" href="#" target="_blank" rel="noopener">Sprawdź Spotify</a>
             <a id="discordLink" class="discord" href="#" target="_blank" rel="noopener">Wejdź na Discord</a>
           </nav>
@@ -1352,7 +1352,7 @@
     });
   });
 
-  // ===== Dock magnification (bez nachodzenia) =====
+  // ===== Dock magnification =====
   const dock = document.getElementById("dock");
   const dockIcons = Array.from(dock.querySelectorAll(".appicon"));
 
@@ -1415,7 +1415,7 @@
   function resetToCenter(win){
     win.style.setProperty("--x", "0px");
     win.style.setProperty("--y", "0px");
-    // jeśli coś by weszło pod menubar, dociągnij w dół
+ 
     requestAnimationFrame(() => {
       const r = win.getBoundingClientRect();
       if (r.top < MENUBAR_SAFE){
@@ -1433,7 +1433,7 @@
 
     if (prefersReduced) return;
 
-    // animacja "z ikonki"
+    
     const fromRect = fromEl.getBoundingClientRect();
     const toRect = win.getBoundingClientRect();
     const dx = (fromRect.left + fromRect.width/2) - (toRect.left + toRect.width/2);
@@ -1451,7 +1451,7 @@
       easing: "cubic-bezier(.2,.9,.2,1)",
       fill: "both"
     }).onfinish = () => {
-      // wróć do normalnej skali 1 (płynnie)
+      
       win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
       requestAnimationFrame(() => {
         win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
@@ -1504,7 +1504,7 @@
     }
   }
 
-  // ===== Dragging for ANY window (robust) =====
+  
   function makeDraggable(titlebarEl){
     const id = titlebarEl.getAttribute("data-drag");
     const win = document.getElementById(id);
@@ -1541,15 +1541,14 @@
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // clamp: żeby nie uciekało
+      
       const maxX = (window.innerWidth / 2) - 80;
       const maxY = (window.innerHeight / 2) - 80;
 
       let nx = clamp(baseX + dx, -maxX, maxX);
       let ny = clamp(baseY + dy, -maxY, maxY);
 
-      // menubar safe
-      // przybliżone: pilnujemy żeby góra okna nie weszła pod menubar
+      
       const r = win.getBoundingClientRect();
       const projectedTop = r.top + dy;
       if (projectedTop < MENUBAR_SAFE){
@@ -1651,7 +1650,7 @@
     toggleWindow(mixWin, folderLauncher, ()=> stopMix(true));
   });
 
-  // ===== Click outside closes popups/menus + closes app menu list only =====
+
   document.addEventListener("click", (e)=>{
     if (!dockIg.contains(e.target)) closeIgPopup();
     closeAllMenus();
@@ -1666,7 +1665,7 @@
     }
   });
 
-  // ===== MIX PLAYER (macOS, no covers, NO autoplay) =====
+  // ===== MIX PLAYER  =====
   const MIX_PREVIEW_SECONDS = 20;
   const MIX_TRACKS = [
     { title: "Utwór 1", src: "mix1.mp3" },
