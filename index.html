@@ -2524,6 +2524,97 @@ openSetlista.addEventListener("click", (e)=>{
 document.getElementById("notesClose").onclick = ()=> minimizeWindow(notesWin, openSetlista);
 document.getElementById("notesMin").onclick = ()=> minimizeWindow(notesWin, openSetlista);
 
+// ===== DRIVE + iCloud Photos =====
+const driveLauncher = document.getElementById("driveLauncher");
+const driveWin = document.getElementById("driveWin");
+const photosWin = document.getElementById("photosWin");
+const openIcloudPhotos = document.getElementById("openIcloudPhotos");
+
+
+wireWindowControls("drive", driveWin, driveLauncher);
+wireWindowControls("photos", photosWin, driveLauncher);
+
+
+driveLauncher.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  closeAllMenus(); closeIgPopup(); setOpen(false);
+  toggleWindow(driveWin, driveLauncher);
+});
+
+
+openIcloudPhotos.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  
+  if (!driveWin.classList.contains("open")) openWindow(driveWin, driveLauncher);
+  
+  openWindow(photosWin, openIcloudPhotos);
+});
+
+// ===== iCloud Grid (80% fake) + viewer =====
+const icloudGrid = document.getElementById("icloudGrid");
+const icloudViewer = document.getElementById("icloudViewer");
+const icloudViewerImg = document.getElementById("icloudViewerImg");
+const icloudViewerClose = document.getElementById("icloudViewerClose");
+const icloudViewerTitle = document.getElementById("icloudViewerTitle");
+
+const REAL_PHOTOS = ["p1.jpg","p2.jpg","p3.jpg","p4.jpg","p5.jpg","p6.jpg"];
+
+function buildIcloudGrid(){
+  if (!icloudGrid) return;
+
+  icloudGrid.innerHTML = "";
+
+  const totalTiles = 36;        
+  const realCount = REAL_PHOTOS.length; /
+
+  // losowe sloty na prawdziwe zdjęcia
+  const slots = new Set();
+  while (slots.size < realCount){
+    slots.add(Math.floor(Math.random() * totalTiles));
+  }
+
+  let idx = 0;
+
+  for (let i=0; i<totalTiles; i++){
+    const tile = document.createElement("div");
+    tile.className = "photoTile";
+
+    if (slots.has(i)){
+      const src = REAL_PHOTOS[idx++];
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "";
+      tile.appendChild(img);
+
+      tile.addEventListener("click", ()=>{
+        icloudViewerImg.src = src;
+        icloudViewerTitle.textContent = src;
+        icloudViewer.classList.add("open");
+        icloudViewer.setAttribute("aria-hidden", "false");
+      });
+    } else {
+      tile.classList.add("loading");
+    }
+
+    icloudGrid.appendChild(tile);
+  }
+}
+
+icloudViewerClose.addEventListener("click", ()=>{
+  icloudViewer.classList.remove("open");
+  icloudViewer.setAttribute("aria-hidden", "true");
+  icloudViewerImg.src = "";
+});
+
+// ESC zamyka viewer
+window.addEventListener("keydown", (e)=>{
+  if (e.key === "Escape" && icloudViewer.classList.contains("open")){
+    icloudViewerClose.click();
+  }
+});
+
+// buduj grid raz na start
+buildIcloudGrid();
 
 </script>
 </body>
