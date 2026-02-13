@@ -972,6 +972,144 @@
   border-color: rgba(255,255,255,.18);
 }
 .mobileBtn.primary:hover{ background: rgba(88,101,242,1); }
+/* ===== iCloud Photos UI ===== */
+.icloudTop{
+  padding:12px 16px 10px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.icloudH1{
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.2px;
+  opacity:.95;
+}
+
+.icloudTabs{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+}
+
+.icloudTab{
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  padding:7px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:12px;
+}
+.icloudTab.active{
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.22);
+}
+
+.icloudSearch{
+  width:min(260px, 40vw);
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.18);
+  color: rgba(255,255,255,.92);
+  padding:9px 12px;
+  border-radius:12px;
+  outline:none;
+}
+
+.icloudGrid{
+  padding:16px;
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap:10px;
+}
+
+.photoTile{
+  aspect-ratio: 1 / 1;
+  border-radius:14px;
+  overflow:hidden;
+  background: rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  position:relative;
+  cursor:pointer;
+}
+
+.photoTile img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* fake loading tiles */
+.photoTile.loading{
+  cursor:default;
+  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+  background-size: 240px 100%;
+  animation: shimmer 1.15s infinite linear;
+}
+@keyframes shimmer{
+  0%{ background-position: -240px 0; }
+  100%{ background-position: 240px 0; }
+}
+
+/* ===== iCloud Viewer ===== */
+.icloudViewer{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  display:none;
+}
+.icloudViewer.open{ display:block; }
+
+.icloudViewerTop{
+  height:54px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+}
+
+.icloudViewerBtn{
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  padding:8px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:12px;
+}
+
+.icloudViewerTitle{
+  font-size:13px;
+  opacity:.85;
+  font-weight:700;
+}
+
+.icloudViewerBody{
+  height: calc(100vh - 54px);
+  display:grid;
+  place-items:center;
+  padding:16px;
+}
+
+.icloudViewerBody img{
+  max-width:min(980px, 96vw);
+  max-height:min(720px, 82vh);
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: 0 40px 140px rgba(0,0,0,.55);
+  object-fit:contain;
+  background: rgba(255,255,255,.06);
+}
 
 </style>
 </head>
