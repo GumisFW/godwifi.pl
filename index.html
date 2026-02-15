@@ -444,36 +444,46 @@
   }
   
   .win-btn{
-    width:28px;
-    height:28px;
-    border-radius:4px;
+    width:32px;
+    height:32px;
+    border-radius:50%;
     border:0;
     padding:0;
     cursor:pointer;
-    font-size:16px;
-    font-weight:bold;
+    font-size:14px;
+    font-weight:normal;
     display:grid;
     place-items:center;
-    transition:.12s ease;
+    transition:.15s ease;
+    font-family: system-ui, -apple-system, sans-serif;
   }
   
   .win-btn.minimize{
-    background: rgba(255,189,46,.85);
-    color: rgba(0,0,0,.8);
+    background: #FDB927;
+    color: rgba(0,0,0,.75);
   }
-  .win-btn.minimize:hover{ background: rgba(255,189,46,1); }
+  .win-btn.minimize:hover{ 
+    background: #FDCB4A;
+    transform: scale(1.05);
+  }
   
   .win-btn.maximize{
-    background: rgba(40,200,100,.85);
-    color: rgba(0,0,0,.8);
+    background: #26A65B;
+    color: rgba(0,0,0,.75);
   }
-  .win-btn.maximize:hover{ background: rgba(40,200,100,1); }
+  .win-btn.maximize:hover{ 
+    background: #36C672;
+    transform: scale(1.05);
+  }
   
   .win-btn.close{
-    background: rgba(255,95,87,.85);
+    background: #E74C3C;
     color: rgba(255,255,255,.95);
   }
-  .win-btn.close:hover{ background: rgba(255,95,87,1); }
+  .win-btn.close:hover{ 
+    background: #EC7063;
+    transform: scale(1.05);
+  }
 
   .title{
     font-size:13px;
