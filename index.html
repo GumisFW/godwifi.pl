@@ -194,6 +194,16 @@
     border-radius:2px;
     background: rgba(0,0,0,.3);
   }
+  .batteryBolt{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-size:9px;
+    opacity:0;
+    transform: translateY(-0.5px);
+    pointer-events:none;
+  }
 
   /* ===== Desktop icons (Ubuntu-style grid) ===== */
   .icons{
@@ -1120,6 +1130,7 @@
           <div class="batteryIcon">
             <div class="batteryLevel" id="batteryLevel"></div>
             <div class="batteryCap"></div>
+            <div class="batteryBolt" id="batteryBolt">⚡</div>
           </div>
           <div style="font-variant-numeric: tabular-nums;" id="batteryPct">--%</div>
         </div>
@@ -1286,24 +1297,33 @@
   // ===== Battery =====
   const batteryLevelEl = document.getElementById("batteryLevel");
   const batteryPctEl = document.getElementById("batteryPct");
+  const batteryBoltEl = document.getElementById("batteryBolt");
 
   function batteryModelByHour(h){
     let pct = 100;
     let charging = false;
 
-    if (h >= 22 || h < 6){
+    // Charging: 22:00 (10 PM) to 08:00 (8 AM)
+    // Discharging: 08:00 (8 AM) to 22:00 (10 PM)
+    
+    if (h >= 22 || h < 8){
+      // Charging period
       charging = true;
-      const t = (h >= 22) ? (h - 22) : (h + 2);
-      pct = Math.min(95, 20 + t * 10);
-    } else if (h >= 16){
-      const t = (h - 16) / 6;
-      pct = Math.round(50 - t * 38);
-    } else if (h >= 8){
-      const t = (h - 8) / 8;
-      pct = Math.round(100 - t * 50);
+      if (h >= 22) {
+        // 22:00 - 23:59 (2 hours into night)
+        const hoursCharging = h - 22;
+        pct = Math.min(100, 20 + hoursCharging * 15);
+      } else {
+        // 00:00 - 07:59 (continuing charge)
+        const hoursCharging = (24 - 22) + h; // hours since 22:00
+        pct = Math.min(100, 20 + hoursCharging * 8);
+      }
     } else {
-      const t = (h - 6) / 2;
-      pct = Math.round(80 + t * 20);
+      // Discharging period: 08:00 to 22:00 (14 hours total)
+      charging = false;
+      const hoursSinceStart = h - 8;
+      // Start at 100%, end at ~12%
+      pct = Math.round(100 - (hoursSinceStart / 14) * 88);
     }
 
     pct = Math.max(1, Math.min(100, pct));
@@ -1316,7 +1336,11 @@
 
     batteryLevelEl.style.width = pct + "%";
     batteryPctEl.textContent = pct + "%";
+    
+    // Show/hide charging bolt
+    batteryBoltEl.style.opacity = charging ? "1" : "0";
 
+    // Color based on percentage
     if (pct < 15) batteryLevelEl.style.background = "rgba(255,59,48,.9)";
     else if (pct < 35) batteryLevelEl.style.background = "rgba(255,149,0,.9)";
     else batteryLevelEl.style.background = "rgba(52,199,89,.9)";
