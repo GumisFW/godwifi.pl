@@ -33,6 +33,7 @@
     overflow:hidden;
     color:var(--text);
     user-select:none;
+    padding-bottom:44px; /* miejsce na taskbar */
   }
 
   /* ===== tapeta ===== */
@@ -74,7 +75,7 @@
     transform: scale(1.12);
   }
 
-  /* ===== Top menu bar ===== */
+  /* ===== Top menu bar (zostaje dla ID, ale ukryjemy theme override) ===== */
   .menubar{
     position:fixed; top:0; left:0; right:0;
     height:32px;
@@ -207,49 +208,49 @@
     cursor:pointer;
   }
   .wifiBtn:hover{ background: rgba(255,255,255,.12); }
+
   /* ===== NOTES WINDOW ===== */
-.app.notes{ width: min(860px, 96vw); }
+  .app.notes{ width: min(860px, 96vw); }
 
-.notesWrap{
-  display:flex;
-  min-height:420px;
-  height: min(60vh,600px);
-  background: rgba(255,255,255,.08);
-}
+  .notesWrap{
+    display:flex;
+    min-height:420px;
+    height: min(60vh,600px);
+    background: rgba(255,255,255,.08);
+  }
 
-.notesSidebar{
-  width:240px;
-  border-right:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  backdrop-filter: blur(18px);
-  padding:12px;
-}
+  .notesSidebar{
+    width:240px;
+    border-right:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(18px);
+    padding:12px;
+  }
 
-.notesSideTitle{
-  font-size:12px;
-  opacity:.7;
-  margin-bottom:8px;
-}
+  .notesSideTitle{
+    font-size:12px;
+    opacity:.7;
+    margin-bottom:8px;
+  }
 
-.notesItem{
-  background: rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;
-  padding:10px;
-}
+  .notesItem{
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    padding:10px;
+  }
 
-.notesEditor{
-  flex:1;
-  padding:18px;
-}
+  .notesEditor{
+    flex:1;
+    padding:18px;
+  }
 
-.notePaper{
-  background: rgba(255,255,255,.05);
-  border-radius:14px;
-  padding:16px;
-  border:1px solid rgba(255,255,255,.12);
-}
-
+  .notePaper{
+    background: rgba(255,255,255,.05);
+    border-radius:14px;
+    padding:16px;
+    border:1px solid rgba(255,255,255,.12);
+  }
 
   /* ===== Desktop icons ===== */
   .icons{
@@ -300,7 +301,7 @@
     filter: drop-shadow(0 8px 14px rgba(0,0,0,.20));
     opacity: .95;
     transform: translateZ(0);
-    border-radius: 12px; 
+    border-radius: 12px;
   }
 
   /* ===== Window system ===== */
@@ -308,13 +309,13 @@
     position:fixed;
     inset:0;
     z-index:200;
-    pointer-events:none; 
+    pointer-events:none;
   }
 
   .app{
     position:fixed;
     left:50%;
-    top: calc(50% + 14px); 
+    top: calc(50% + 14px);
     width:min(560px, 92vw);
     border-radius:22px;
     overflow:hidden;
@@ -328,7 +329,6 @@
     opacity:0;
     pointer-events:none;
 
-    /* zawsze startuje centralnie */
     transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985);
     transition: transform .20s ease, opacity .18s ease;
   }
@@ -446,48 +446,6 @@
       inset 0 1px 0 rgba(255,255,255,.26);
   }
   .menu a.discord:hover{ background: rgba(88,101,242,1); }
-/* ===== NOTES WINDOW ===== */
-.app.notes{ width: min(860px, 96vw); }
-
-.notesWrap{
-  display:flex;
-  min-height:420px;
-  height: min(60vh,600px);
-  background: rgba(255,255,255,.08);
-}
-
-.notesSidebar{
-  width:240px;
-  border-right:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  backdrop-filter: blur(18px);
-  padding:12px;
-}
-
-.notesSideTitle{
-  font-size:12px;
-  opacity:.7;
-  margin-bottom:8px;
-}
-
-.notesItem{
-  background: rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;
-  padding:10px;
-}
-
-.notesEditor{
-  flex:1;
-  padding:18px;
-}
-
-.notePaper{
-  background: rgba(255,255,255,.05);
-  border-radius:14px;
-  padding:16px;
-  border:1px solid rgba(255,255,255,.12);
-}
 
   /* ===== Finder windows ===== */
   .app.finder{ width:min(680px, 92vw); }
@@ -871,286 +829,413 @@
   @media (prefers-reduced-motion: reduce){
     .app, .menuWrap, .logo{ transition:none !important; }
   }
+
   /* ===== Mobile block screen ===== */
-.mobileBlock{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  display:none;
-  padding:22px;
-  color: rgba(255,255,255,.92);
-  background:
-    radial-gradient(900px 520px at 18% 18%, rgba(120,122,255,.28), transparent 60%),
-    radial-gradient(780px 420px at 86% 28%, rgba(255,120,200,.22), transparent 62%),
-    radial-gradient(820px 520px at 52% 86%, rgba(120,255,210,.18), transparent 62%),
-    linear-gradient(180deg,#0f1220,#050509);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
+  .mobileBlock{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:none;
+    padding:22px;
+    color: rgba(255,255,255,.92);
+    background:
+      radial-gradient(900px 520px at 18% 18%, rgba(120,122,255,.28), transparent 60%),
+      radial-gradient(780px 420px at 86% 28%, rgba(255,120,200,.22), transparent 62%),
+      radial-gradient(820px 520px at 52% 86%, rgba(120,255,210,.18), transparent 62%),
+      linear-gradient(180deg,#0f1220,#050509);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
 
-.mobileBlockCard{
-  max-width:520px;
-  margin:0 auto;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.12);
-  box-shadow: 0 50px 140px rgba(0,0,0,.55);
-  padding:18px 18px 16px;
-}
+  .mobileBlockCard{
+    max-width:520px;
+    margin:0 auto;
+    border-radius:22px;
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.12);
+    box-shadow: 0 50px 140px rgba(0,0,0,.55);
+    padding:18px 18px 16px;
+  }
 
-.mobileBlockTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-  padding:8px 10px;
-  border-radius:16px;
-  background: rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.12);
-}
+  .mobileBlockTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+    padding:8px 10px;
+    border-radius:16px;
+    background: rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.12);
+  }
 
-.mobileTraffic{ display:flex; gap:8px; }
-.mobileDot{ width:12px; height:12px; border-radius:50%; }
-.mobileDot.red{ background:#ff5f57; }
-.mobileDot.yellow{ background:#ffbd2e; }
-.mobileDot.green{ background:#28c840; }
+  .mobileTraffic{ display:flex; gap:8px; }
+  .mobileDot{ width:12px; height:12px; border-radius:50%; }
+  .mobileDot.red{ background:#ff5f57; }
+  .mobileDot.yellow{ background:#ffbd2e; }
+  .mobileDot.green{ background:#28c840; }
 
-.mobileTitle{
-  font-size:13px;
-  opacity:.88;
-}
+  .mobileTitle{
+    font-size:13px;
+    opacity:.88;
+  }
 
-.mobileBlockBody{
-  padding:6px 6px 0;
-  text-align:left;
-}
+  .mobileBlockBody{
+    padding:6px 6px 0;
+    text-align:left;
+  }
 
-.mobileH1{
-  font-size:18px;
-  margin:8px 0 8px;
-  letter-spacing:.2px;
-}
+  .mobileH1{
+    font-size:18px;
+    margin:8px 0 8px;
+    letter-spacing:.2px;
+  }
 
-.mobileP{
-  margin:0 0 14px;
-  opacity:.85;
-  line-height:1.35;
-  font-size:14px;
-}
+  .mobileP{
+    margin:0 0 14px;
+    opacity:.85;
+    line-height:1.35;
+    font-size:14px;
+  }
 
-.mobileMeta{
-  font-size:12px;
-  opacity:.7;
-  margin-top:10px;
-}
+  .mobileMeta{
+    font-size:12px;
+    opacity:.7;
+    margin-top:10px;
+  }
 
-.mobileActions{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-  flex-wrap:wrap;
-}
+  .mobileActions{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
 
-.mobileBtn{
-  border:1px solid rgba(255,255,255,.20);
-  background: rgba(255,255,255,.14);
-  color: rgba(255,255,255,.92);
-  padding:10px 12px;
-  border-radius:999px;
-  cursor:pointer;
-  font-weight:600;
-  font-size:13px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  transition:.15s ease;
-}
+  .mobileBtn{
+    border:1px solid rgba(255,255,255,.20);
+    background: rgba(255,255,255,.14);
+    color: rgba(255,255,255,.92);
+    padding:10px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition:.15s ease;
+  }
 
-.mobileBtn:hover{ background: rgba(255,255,255,.20); }
-.mobileBtn.primary{
-  background: rgba(88,101,242,.92);
-  border-color: rgba(255,255,255,.18);
-}
-.mobileBtn.primary:hover{ background: rgba(88,101,242,1); }
-/* ===== iCloud Photos UI ===== */
-.icloudTop{
-  padding:12px 16px 10px;
-  border-bottom:1px solid rgba(255,255,255,.12);
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-}
+  .mobileBtn:hover{ background: rgba(255,255,255,.20); }
+  .mobileBtn.primary{
+    background: rgba(88,101,242,.92);
+    border-color: rgba(255,255,255,.18);
+  }
+  .mobileBtn.primary:hover{ background: rgba(88,101,242,1); }
 
-.icloudH1{
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:.2px;
-  opacity:.95;
-}
+  /* ===== iCloud Photos UI ===== */
+  .icloudTop{
+    padding:12px 16px 10px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+  }
 
-.icloudTabs{
-  margin-top:8px;
-  display:flex;
-  gap:8px;
-}
+  .icloudH1{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.2px;
+    opacity:.95;
+  }
 
-.icloudTab{
-  border:1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.10);
-  color: rgba(255,255,255,.92);
-  padding:7px 12px;
-  border-radius:999px;
-  cursor:pointer;
-  font-size:12px;
-}
-.icloudTab.active{
-  background: rgba(255,255,255,.22);
-  border-color: rgba(255,255,255,.22);
-}
+  .icloudTabs{
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+  }
 
-.icloudSearch{
-  width:min(260px, 40vw);
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(0,0,0,.18);
-  color: rgba(255,255,255,.92);
-  padding:9px 12px;
-  border-radius:12px;
-  outline:none;
-}
+  .icloudTab{
+    border:1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.10);
+    color: rgba(255,255,255,.92);
+    padding:7px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:12px;
+  }
+  .icloudTab.active{
+    background: rgba(255,255,255,.22);
+    border-color: rgba(255,255,255,.22);
+  }
 
-.icloudGrid{
-  padding:16px;
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap:10px;
-}
+  .icloudSearch{
+    width:min(260px, 40vw);
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    color: rgba(255,255,255,.92);
+    padding:9px 12px;
+    border-radius:12px;
+    outline:none;
+  }
 
-.photoTile{
-  aspect-ratio: 1 / 1;
-  border-radius:14px;
-  overflow:hidden;
-  background: rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.10);
-  position:relative;
-  cursor:pointer;
-}
+  .icloudGrid{
+    padding:16px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap:10px;
+  }
 
-.photoTile img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
+  .photoTile{
+    aspect-ratio: 1 / 1;
+    border-radius:14px;
+    overflow:hidden;
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.10);
+    position:relative;
+    cursor:pointer;
+  }
 
-/* fake loading tiles */
-.photoTile.loading{
-  cursor:default;
-  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
-  background-size: 240px 100%;
-  animation: shimmer 1.15s infinite linear;
-}
-@keyframes shimmer{
-  0%{ background-position: -240px 0; }
-  100%{ background-position: 240px 0; }
-}
+  .photoTile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
 
-/* ===== iCloud Viewer ===== */
-.icloudViewer{
-  position:fixed;
-  inset:0;
-  z-index:5000;
-  background: rgba(0,0,0,.72);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  display:none;
-}
-.icloudViewer.open{ display:block; }
+  .photoTile.loading{
+    cursor:default;
+    background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+    background-size: 240px 100%;
+    animation: shimmer 1.15s infinite linear;
+  }
+  @keyframes shimmer{
+    0%{ background-position: -240px 0; }
+    100%{ background-position: 240px 0; }
+  }
 
-.icloudViewerTop{
-  height:54px;
-  padding:0 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.06);
-}
+  .icloudViewer{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    background: rgba(0,0,0,.72);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    display:none;
+  }
+  .icloudViewer.open{ display:block; }
 
-.icloudViewerBtn{
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.10);
-  color: rgba(255,255,255,.92);
-  padding:8px 12px;
-  border-radius:999px;
-  cursor:pointer;
-  font-weight:700;
-  font-size:12px;
-}
+  .icloudViewerTop{
+    height:54px;
+    padding:0 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+  }
 
-.icloudViewerTitle{
-  font-size:13px;
-  opacity:.85;
-  font-weight:700;
-}
+  .icloudViewerBtn{
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10);
+    color: rgba(255,255,255,.92);
+    padding:8px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:12px;
+  }
 
-.icloudViewerBody{
-  height: calc(100vh - 54px);
-  display:grid;
-  place-items:center;
-  padding:16px;
-}
+  .icloudViewerTitle{
+    font-size:13px;
+    opacity:.85;
+    font-weight:700;
+  }
 
-.icloudViewerBody img{
-  max-width:min(980px, 96vw);
-  max-height:min(720px, 82vh);
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow: 0 40px 140px rgba(0,0,0,.55);
-  object-fit:contain;
-  background: rgba(255,255,255,.06);
-}
+  .icloudViewerBody{
+    height: calc(100vh - 54px);
+    display:grid;
+    place-items:center;
+    padding:16px;
+  }
 
+  .icloudViewerBody img{
+    max-width:min(980px, 96vw);
+    max-height:min(720px, 82vh);
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow: 0 40px 140px rgba(0,0,0,.55);
+    object-fit:contain;
+    background: rgba(255,255,255,.06);
+  }
+
+  /* =========================================================
+     WIN/UBUNTU THEME OVERRIDE (tylko wygląd)
+  ========================================================= */
+
+  /* tapeta mniej “mac” */
+  .wallpaper{
+    background:
+      radial-gradient(1000px 600px at 15% 20%, rgba(100,170,255,.22), transparent 60%),
+      radial-gradient(900px 560px at 85% 30%, rgba(255,120,80,.16), transparent 62%),
+      radial-gradient(900px 650px at 45% 90%, rgba(120,255,170,.12), transparent 62%),
+      linear-gradient(180deg,#0a0f18,#05060a);
+    filter:saturate(115%) contrast(108%);
+  }
+
+  /* ukryj górny pasek macOS */
+  .menubar{ display:none !important; }
+
+  /* taskbar */
+  .taskbar{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    height:44px;
+    padding:0 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    z-index: 20000;
+
+    background: rgba(20,22,28,.72);
+    border-top: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+  .taskLeft{
+    display:flex; align-items:center; gap:10px;
+    min-width:0;
+  }
+  .startBtn{
+    width:34px; height:34px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.08);
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  }
+  .startBtn:active{ transform: scale(.98); }
+  .startMark{
+    width:16px; height:16px;
+    border-radius:4px;
+    background: linear-gradient(90deg, rgba(0,255,180,.95), rgba(60,140,255,.95));
+    box-shadow: 0 10px 26px rgba(0,0,0,.35);
+  }
+  .taskRight{
+    display:flex; align-items:center; gap:12px;
+    font-size:12px;
+    opacity:.92;
+    font-variant-numeric: tabular-nums;
+  }
+  #tbWifi{ padding:6px 8px; border-radius:10px; }
+  #tbWifi:hover{ background: rgba(255,255,255,.08); }
+
+  /* dock nad taskbarem */
+  .dock{
+    bottom: 54px !important;
+    border-radius: 14px;
+    background: rgba(30,33,40,.55);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+
+  /* ikony bardziej “win” */
+  .icon .pic{
+    border-radius: 12px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.12);
+  }
+
+  /* okna: mniej glass apple */
+  .app{
+    border-radius: 12px !important;
+    background: rgba(18,20,26,.86) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    box-shadow: 0 26px 90px rgba(0,0,0,.55) !important;
+    backdrop-filter: blur(10px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+  }
+  .titlebar{
+    height: 40px !important;
+    background: rgba(255,255,255,.06) !important;
+    border-bottom: 1px solid rgba(255,255,255,.10) !important;
+    cursor: grab;
+  }
+
+  /* win-controls zamiast traffic lights */
+  .traffic{ gap:6px; }
+  .dot{
+    width: 28px !important;
+    height: 22px !important;
+    border-radius: 8px !important;
+    background: rgba(255,255,255,.06) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    position: relative;
+  }
+  .dot.red{ background: rgba(255,80,80,.16) !important; }
+  .dot.yellow{ background: rgba(255,200,70,.14) !important; }
+  .dot.green{ background: rgba(120,255,160,.12) !important; }
+
+  .dot::after{
+    content:"";
+    position:absolute; inset:0;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    color: rgba(255,255,255,.85);
+    font-weight: 800;
+  }
+  .dot.red::after{ content:"✕"; }
+  .dot.yellow::after{ content:"_"; transform: translateY(-3px); }
+  .dot.green::after{ content:"□"; }
+
+  /* przyciski menu mniej “pill apple” */
+  .menu a{
+    border-radius: 12px !important;
+    background: rgba(255,255,255,.10) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+  }
 </style>
 </head>
 
 <body>
   <!-- Mobile / unknown device overlay -->
-<div class="mobileBlock" id="mobileBlock" role="dialog" aria-modal="true" aria-label="Nieznane urządzenie">
-  <div class="mobileBlockCard">
-    <div class="mobileBlockTop">
-      <div class="mobileTraffic" aria-hidden="true">
-        <div class="mobileDot red"></div>
-        <div class="mobileDot yellow"></div>
-        <div class="mobileDot green"></div>
-      </div>
-      <div class="mobileTitle">godwifi</div>
-      <div style="width:52px;"></div>
-    </div>
-
-    <div class="mobileBlockBody">
-      <div class="mobileH1">Nieznane urządzenie</div>
-      <p class="mobileP">
-        Ta strona jest zrobiona pod desktop (macOS). Na telefonie wygląda słabo i część rzeczy nie działa jak trzeba.
-        Wejdź proszę na komputerze.
-      </p>
-
-      <div class="mobileActions">
-        <button class="mobileBtn primary" id="copyLinkBtn" type="button">Skopiuj link</button>
-        <button class="mobileBtn" id="continueAnywayBtn" type="button">Kontynuuj mimo to</button>
+  <div class="mobileBlock" id="mobileBlock" role="dialog" aria-modal="true" aria-label="Nieznane urządzenie">
+    <div class="mobileBlockCard">
+      <div class="mobileBlockTop">
+        <div class="mobileTraffic" aria-hidden="true">
+          <div class="mobileDot red"></div>
+          <div class="mobileDot yellow"></div>
+          <div class="mobileDot green"></div>
+        </div>
+        <div class="mobileTitle">godwifi</div>
+        <div style="width:52px;"></div>
       </div>
 
-      <div class="mobileMeta" id="mobileMeta"></div>
+      <div class="mobileBlockBody">
+        <div class="mobileH1">Nieznane urządzenie</div>
+        <p class="mobileP">
+          Ta strona jest zrobiona pod desktop. Na telefonie wygląda słabo i część rzeczy nie działa jak trzeba.
+          Wejdź proszę na komputerze.
+        </p>
+
+        <div class="mobileActions">
+          <button class="mobileBtn primary" id="copyLinkBtn" type="button">Skopiuj link</button>
+          <button class="mobileBtn" id="continueAnywayBtn" type="button">Kontynuuj mimo to</button>
+        </div>
+
+        <div class="mobileMeta" id="mobileMeta"></div>
+      </div>
     </div>
   </div>
-</div>
 
   <div class="wallpaper" aria-hidden="true"></div>
   <div class="brandBlur" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- Top menu bar -->
-  <div class="menubar" role="banner" aria-label="macOS menu bar">
+  <!-- Top menu bar (zostaje w DOM dla istniejących ID, ale jest ukryty w CSS) -->
+  <div class="menubar" role="banner" aria-label="menu bar">
     <div class="left">
       <span class="apple" aria-hidden="true"></span>
       <strong style="font-weight:600">Finder</strong>
@@ -1207,56 +1292,55 @@
   <!-- Stage -->
   <div class="stage" id="stage">
     <!-- ===== NOTATNIK SETLISTA ===== -->
-<section class="app notes" id="notesWin">
-  <div class="titlebar" data-drag="notesWin">
-    <div class="traffic">
-      <button class="dot red" id="notesClose"></button>
-      <button class="dot yellow" id="notesMin"></button>
-      <button class="dot green"></button>
-    </div>
-    <div class="title">Notatki</div>
-    <div style="width:52px;"></div>
-  </div>
-
-  <div class="notesWrap">
-    <aside class="notesSidebar">
-      <div class="notesSideTitle">Notatki</div>
-
-      <div class="notesItem">
-        <div class="t">setlista</div>
-        <div class="s">warszawa, 7/11…</div>
-      </div>
-    </aside>
-
-    <main class="notesEditor">
-      <div class="notesHeader">
-        <h2>setlista</h2>
-        <div class="notesPill">koncert</div>
+    <section class="app notes" id="notesWin">
+      <div class="titlebar" data-drag="notesWin">
+        <div class="traffic">
+          <button class="dot red" id="notesClose"></button>
+          <button class="dot yellow" id="notesMin"></button>
+          <button class="dot green"></button>
+        </div>
+        <div class="title">Notatki</div>
+        <div style="width:52px;"></div>
       </div>
 
-      <div class="notePaper">
-        <ol>
-          <li>warszawa (2:32)</li>
-          <li>7/11 (2:05)</li>
-          <li>sweet (2:04)</li>
-          <li>emoji (1:48)</li>
-          <li>pingwin (2:24) — Żabson, Drabusheyka</li>
-          <li>2late (2:17)</li>
-          <li>hentai haze (1:39) — Chlor</li>
-          <li>moshpit (2:02)</li>
-          <li>dj (1:46)</li>
-          <li>usa (2:09)</li>
-          <li>sms (2:49)</li>
-          <li>pijama party (1:38)</li>
-          <li>everyday (1:37)</li>
-          <li>twilight zone (1:39)</li>
-          <li><strong>free wifi</strong> (1:48)</li>
-        </ol>
-      </div>
-    </main>
-  </div>
-</section>
+      <div class="notesWrap">
+        <aside class="notesSidebar">
+          <div class="notesSideTitle">Notatki</div>
 
+          <div class="notesItem">
+            <div class="t">setlista</div>
+            <div class="s">warszawa, 7/11…</div>
+          </div>
+        </aside>
+
+        <main class="notesEditor">
+          <div class="notesHeader">
+            <h2>setlista</h2>
+            <div class="notesPill">koncert</div>
+          </div>
+
+          <div class="notePaper">
+            <ol>
+              <li>warszawa (2:32)</li>
+              <li>7/11 (2:05)</li>
+              <li>sweet (2:04)</li>
+              <li>emoji (1:48)</li>
+              <li>pingwin (2:24) — Żabson, Drabusheyka</li>
+              <li>2late (2:17)</li>
+              <li>hentai haze (1:39) — Chlor</li>
+              <li>moshpit (2:02)</li>
+              <li>dj (1:46)</li>
+              <li>usa (2:09)</li>
+              <li>sms (2:49)</li>
+              <li>pijama party (1:38)</li>
+              <li>everyday (1:37)</li>
+              <li>twilight zone (1:39)</li>
+              <li><strong>free wifi</strong> (1:48)</li>
+            </ol>
+          </div>
+        </main>
+      </div>
+    </section>
 
     <!-- Main app window -->
     <section class="app" id="app" aria-label="Okno aplikacji">
@@ -1350,12 +1434,11 @@
             <span>wideo</span>
           </button>
 
-        <button class="finderItem" id="openSetlista" type="button">
-  <img src="drive.png" alt="" class="finderIcon">
-  <span>setlista</span>
-  <div class="fileBadge">plik</div>
-</button>
-
+          <button class="finderItem" id="openSetlista" type="button">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>setlista</span>
+            <div class="fileBadge">plik</div>
+          </button>
 
           <button class="finderItem" type="button">
             <img src="drive.png" alt="" class="finderIcon">
@@ -1418,69 +1501,70 @@
         <audio id="mixAudio" preload="metadata"></audio>
       </div>
     </section>
-<!-- ===== DRIVE window ===== -->
-<section class="app finder" id="driveWin" aria-label="Dysk">
-  <div class="titlebar" data-drag="driveWin">
-    <div class="traffic" aria-label="Sterowanie oknem">
-      <button class="dot red" id="driveClose" type="button" aria-label="Zamknij"></button>
-      <button class="dot yellow" id="driveMin" type="button" aria-label="Minimalizuj"></button>
-      <button class="dot green" id="driveMax" type="button" aria-label="Powiększ"></button>
-    </div>
-    <div class="title">Dysk</div>
-    <div style="width:52px;"></div>
-  </div>
 
-  <div class="finderPath">~/Dysk</div>
-  <div class="finderBody">
-    <div class="finderGrid" aria-label="Zawartość dysku">
-      <button class="finderItem" type="button" id="openIcloudPhotos">
-        <img src="Galeria iCloud ikona.png" alt="" class="finderIcon">
-        <span>Galeria iCloud</span>
-      </button>
-    </div>
-  </div>
-</section>
+    <!-- ===== DRIVE window ===== -->
+    <section class="app finder" id="driveWin" aria-label="Dysk">
+      <div class="titlebar" data-drag="driveWin">
+        <div class="traffic" aria-label="Sterowanie oknem">
+          <button class="dot red" id="driveClose" type="button" aria-label="Zamknij"></button>
+          <button class="dot yellow" id="driveMin" type="button" aria-label="Minimalizuj"></button>
+          <button class="dot green" id="driveMax" type="button" aria-label="Powiększ"></button>
+        </div>
+        <div class="title">Dysk</div>
+        <div style="width:52px;"></div>
+      </div>
 
-<!-- ===== iCloud Photos window ===== -->
-<section class="app finder" id="photosWin" aria-label="iCloud Photos">
-  <div class="titlebar" data-drag="photosWin">
-    <div class="traffic" aria-label="Sterowanie oknem">
-      <button class="dot red" id="photosClose" type="button" aria-label="Zamknij"></button>
-      <button class="dot yellow" id="photosMin" type="button" aria-label="Minimalizuj"></button>
-      <button class="dot green" id="photosMax" type="button" aria-label="Powiększ"></button>
-    </div>
-    <div class="title">iCloud Photos</div>
-    <div style="width:52px;"></div>
-  </div>
+      <div class="finderPath">~/Dysk</div>
+      <div class="finderBody">
+        <div class="finderGrid" aria-label="Zawartość dysku">
+          <button class="finderItem" type="button" id="openIcloudPhotos">
+            <img src="Galeria iCloud ikona.png" alt="" class="finderIcon">
+            <span>Galeria iCloud</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
-  <div class="icloudTop">
-    <div class="icloudLeft">
-      <div class="icloudH1">Zdjęcia</div>
-      <div class="icloudTabs">
-        <button class="icloudTab active" data-tab="recent">Ostatnie</button>
-        <button class="icloudTab" data-tab="albums">Albumy</button>
-        <button class="icloudTab" data-tab="shared">Udostępnione</button>
+    <!-- ===== iCloud Photos window ===== -->
+    <section class="app finder" id="photosWin" aria-label="iCloud Photos">
+      <div class="titlebar" data-drag="photosWin">
+        <div class="traffic" aria-label="Sterowanie oknem">
+          <button class="dot red" id="photosClose" type="button" aria-label="Zamknij"></button>
+          <button class="dot yellow" id="photosMin" type="button" aria-label="Minimalizuj"></button>
+          <button class="dot green" id="photosMax" type="button" aria-label="Powiększ"></button>
+        </div>
+        <div class="title">iCloud Photos</div>
+        <div style="width:52px;"></div>
+      </div>
+
+      <div class="icloudTop">
+        <div class="icloudLeft">
+          <div class="icloudH1">Zdjęcia</div>
+          <div class="icloudTabs">
+            <button class="icloudTab active" data-tab="recent">Ostatnie</button>
+            <button class="icloudTab" data-tab="albums">Albumy</button>
+            <button class="icloudTab" data-tab="shared">Udostępnione</button>
+          </div>
+        </div>
+
+        <input class="icloudSearch" id="icloudSearch" placeholder="Szukaj">
+      </div>
+
+      <div class="icloudGrid" id="icloudGrid"></div>
+    </section>
+
+    <!-- ===== iCloud viewer (full) ===== -->
+    <div class="icloudViewer" id="icloudViewer" aria-hidden="true">
+      <div class="icloudViewerTop">
+        <button class="icloudViewerBtn" id="icloudViewerClose" type="button">Gotowe</button>
+        <div class="icloudViewerTitle" id="icloudViewerTitle">Zdjęcie</div>
+        <div style="width:72px;"></div>
+      </div>
+
+      <div class="icloudViewerBody">
+        <img id="icloudViewerImg" alt="">
       </div>
     </div>
-
-    <input class="icloudSearch" id="icloudSearch" placeholder="Szukaj">
-  </div>
-
-  <div class="icloudGrid" id="icloudGrid"></div>
-</section>
-
-<!-- ===== iCloud viewer (full) ===== -->
-<div class="icloudViewer" id="icloudViewer" aria-hidden="true">
-  <div class="icloudViewerTop">
-    <button class="icloudViewerBtn" id="icloudViewerClose" type="button">Gotowe</button>
-    <div class="icloudViewerTitle" id="icloudViewerTitle">Zdjęcie</div>
-    <div style="width:72px;"></div>
-  </div>
-
-  <div class="icloudViewerBody">
-    <img id="icloudViewerImg" alt="">
-  </div>
-</div>
 
     <!-- Game window -->
     <section class="app game" id="gameWin" aria-label="Gra">
@@ -1504,7 +1588,6 @@
         <div class="gameHint">Sterowanie: <b>Space</b> / <b>↑</b> / klik / tap — skok. Po przegranej: Space aby restart.</div>
       </div>
     </section>
-
   </div>
 
   <!-- Dock -->
@@ -1549,13 +1632,24 @@
     </div>
   </div>
 
+  <!-- Windows/Ubuntu-like taskbar -->
+  <div class="taskbar" id="taskbar" aria-label="Pasek zadań">
+    <div class="taskLeft">
+      <button class="startBtn" id="startBtn" type="button" title="Menu">
+        <span class="startMark" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="taskRight">
+      <span id="tbWifi" title="Kliknij: gra">Wi-Fi</span>
+      <span id="tbBat">--%</span>
+      <span id="tbClock">--:--</span>
+    </div>
+  </div>
 
   <script>
   // ====== MAINTENANCE MODE  (test/tryb) ======
- 
   const MAINTENANCE = true;
-
- 
   const PASSWORD = "g0dwifi";
 
   function isUnlocked() {
@@ -1624,7 +1718,7 @@
     function attempt() {
       if (pw.value === PASSWORD) {
         localStorage.setItem("godwifi_unlocked", "1");
-        location.href = location.origin + location.pathname; // bez parametru
+        location.href = location.origin + location.pathname;
       } else {
         err.textContent = "Złe hasło.";
       }
@@ -1637,67 +1731,61 @@
   }
 
   if (MAINTENANCE && !isUnlocked()) {
-    
     document.addEventListener("DOMContentLoaded", showLockScreen);
   }
-</script>
-<script>
+  </script>
+
+  <script>
   // ===== Mobile blocker (unknown device) =====
-(function(){
-  const block = document.getElementById("mobileBlock");
-  if (!block) return;
-
-  const meta = document.getElementById("mobileMeta");
-  const btnCopy = document.getElementById("copyLinkBtn");
-  const btnContinue = document.getElementById("continueAnywayBtn");
-
-  const ua = navigator.userAgent || "";
-  const isTouch = navigator.maxTouchPoints > 0;
-  const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 820;
-
-  // wykrywanie "telefon/tablet" 
-  const isMobileLike = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || (isTouch && smallScreen);
-
-  function show(){
-    block.style.display = "block";
-   
-    document.body.style.overflow = "hidden";
-  }
-
-  function hide(){
-    block.style.display = "none";
-    document.body.style.overflow = "hidden";
-  }
-
-  if (isMobileLike){
-    const device = /iPhone|iPad|iPod/i.test(ua) ? "iOS" :
-                   /Android/i.test(ua) ? "Android" :
-                   "Mobile";
-    meta.textContent = `Wykryto: ${device} · ${window.innerWidth}×${window.innerHeight}`;
-    show();
-  }
-
-  btnContinue?.addEventListener("click", () => hide());
-
-  btnCopy?.addEventListener("click", async () => {
-    try{
-      await navigator.clipboard.writeText(location.href);
-      btnCopy.textContent = "Skopiowano ✅";
-      setTimeout(()=> btnCopy.textContent = "Skopiuj link", 1400);
-    }catch(e){
-      // fallback
-      prompt("Skopiuj link:", location.href);
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    
+  (function(){
+    const block = document.getElementById("mobileBlock");
     if (!block) return;
-    const small = Math.min(window.innerWidth, window.innerHeight) <= 820;
-    const mobileNow = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent || "") || (navigator.maxTouchPoints > 0 && small);
-    if (mobileNow) show();
-  });
-})();
+
+    const meta = document.getElementById("mobileMeta");
+    const btnCopy = document.getElementById("copyLinkBtn");
+    const btnContinue = document.getElementById("continueAnywayBtn");
+
+    const ua = navigator.userAgent || "";
+    const isTouch = navigator.maxTouchPoints > 0;
+    const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 820;
+    const isMobileLike = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || (isTouch && smallScreen);
+
+    function show(){
+      block.style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
+    function hide(){
+      block.style.display = "none";
+      document.body.style.overflow = "hidden";
+    }
+
+    if (isMobileLike){
+      const device = /iPhone|iPad|iPod/i.test(ua) ? "iOS" :
+                     /Android/i.test(ua) ? "Android" :
+                     "Mobile";
+      meta.textContent = Wykryto: ${device} · ${window.innerWidth}×${window.innerHeight};
+      show();
+    }
+
+    btnContinue?.addEventListener("click", () => hide());
+
+    btnCopy?.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        btnCopy.textContent = "Skopiowano ✅";
+        setTimeout(()=> btnCopy.textContent = "Skopiuj link", 1400);
+      }catch(e){
+        prompt("Skopiuj link:", location.href);
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (!block) return;
+      const small = Math.min(window.innerWidth, window.innerHeight) <= 820;
+      const mobileNow = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent || "") || (navigator.maxTouchPoints > 0 && small);
+      if (mobileNow) show();
+    });
+  })();
 
   // ===== LINKS =====
   const IG_GUMIS = "https://instagram.com/tokarz_k";
@@ -1716,7 +1804,7 @@
     const d = new Date();
     const hh = String(d.getHours()).padStart(2,"0");
     const mm = String(d.getMinutes()).padStart(2,"0");
-    clock.textContent = `${hh}:${mm}`;
+    clock.textContent = ${hh}:${mm};
   }
   tick();
   setInterval(tick, 1000 * 10);
@@ -1727,10 +1815,6 @@
   const batteryBoltEl = document.getElementById("batteryBolt");
 
   function batteryModelByHour(h){
-    // 08:00 -> 100%
-    // 16:00 -> ~50%
-    // 22:00 -> ~12%
-    // po 22:00 -> ładowanie ⚡
     let pct = 100;
     let charging = false;
 
@@ -1742,7 +1826,7 @@
       const t = (h - 16) / 6;
       pct = Math.round(50 - t * 38);
     } else if (h >= 8){
-      const t = (h - 8) / 8;
+      const t = (h - 😎 / 8;
       pct = Math.round(100 - t * 50);
     } else {
       const t = (h - 6) / 2;
@@ -1900,7 +1984,7 @@
   function resetToCenter(win){
     win.style.setProperty("--x", "0px");
     win.style.setProperty("--y", "0px");
- 
+
     requestAnimationFrame(() => {
       const r = win.getBoundingClientRect();
       if (r.top < MENUBAR_SAFE){
@@ -1918,7 +2002,6 @@
 
     if (prefersReduced) return;
 
-    
     const fromRect = fromEl.getBoundingClientRect();
     const toRect = win.getBoundingClientRect();
     const dx = (fromRect.left + fromRect.width/2) - (toRect.left + toRect.width/2);
@@ -1929,14 +2012,13 @@
     );
 
     win.animate([
-      { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s})`, opacity: 0.0 },
-      { transform: `translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)`, opacity: 1.0 }
+      { transform: translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s}), opacity: 0.0 },
+      { transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985), opacity: 1.0 }
     ], {
       duration: 320,
       easing: "cubic-bezier(.2,.9,.2,1)",
       fill: "both"
     }).onfinish = () => {
-      
       win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
       requestAnimationFrame(() => {
         win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
@@ -1966,8 +2048,8 @@
     );
 
     const anim = win.animate([
-      { transform: `translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)`, opacity: 1.0 },
-      { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s})`, opacity: 0.0 }
+      { transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985), opacity: 1.0 },
+      { transform: translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s}), opacity: 0.0 }
     ], {
       duration: 280,
       easing: "cubic-bezier(.2,.9,.2,1)",
@@ -1989,7 +2071,6 @@
     }
   }
 
-  
   function makeDraggable(titlebarEl){
     const id = titlebarEl.getAttribute("data-drag");
     const win = document.getElementById(id);
@@ -2026,14 +2107,12 @@
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      
       const maxX = (window.innerWidth / 2) - 80;
       const maxY = (window.innerHeight / 2) - 80;
 
       let nx = clamp(baseX + dx, -maxX, maxX);
       let ny = clamp(baseY + dy, -maxY, maxY);
 
-      
       const r = win.getBoundingClientRect();
       const projectedTop = r.top + dy;
       if (projectedTop < MENUBAR_SAFE){
@@ -2066,7 +2145,6 @@
   const folderLauncher = document.getElementById("folderLauncher");
   const wifiBtn = document.getElementById("wifiBtn");
 
-  // Close/min buttons behave like close
   function wireWindowControls(prefix, win, launcherEl, onClose){
     const closeBtn = document.getElementById(prefix+"Close");
     const minBtn = document.getElementById(prefix+"Min");
@@ -2097,7 +2175,6 @@
   wireWindowControls("mix", mixWin, folderLauncher, ()=> stopMix(true));
   wireWindowControls("game", gameWin, wifiBtn);
 
-  // Toggle on launcher click
   appLauncher.addEventListener("click", (e)=>{
     e.stopPropagation();
     closeAllMenus(); closeIgPopup(); setOpen(false);
@@ -2110,16 +2187,13 @@
     toggleWindow(finderWin, folderLauncher);
   });
 
-  // Wi-Fi toggles game
   wifiBtn.addEventListener("click", (e)=>{
     e.stopPropagation();
     closeAllMenus(); closeIgPopup(); setOpen(false);
     toggleWindow(gameWin, wifiBtn);
-    // start game only when opened
     if (gameWin.classList.contains("open")) startOrResumeGame();
   });
 
-  // Finder items
   const openKoncert = document.getElementById("openKoncert");
   const openMix = document.getElementById("openMix");
 
@@ -2134,7 +2208,6 @@
     if (!finderWin.classList.contains("open")) openWindow(finderWin, folderLauncher);
     toggleWindow(mixWin, folderLauncher, ()=> stopMix(true));
   });
-
 
   document.addEventListener("click", (e)=>{
     if (!dockIg.contains(e.target)) closeIgPopup();
@@ -2199,7 +2272,7 @@
     const s = Math.max(0, Math.min(MIX_PREVIEW_SECONDS, sec));
     const m = Math.floor(s/60);
     const ss = String(Math.floor(s%60)).padStart(2,"0");
-    return `${m}:${ss}`;
+    return ${m}:${ss};
   }
 
   function setMixButtons(){
@@ -2359,7 +2432,6 @@
     }
   });
 
-  // init mix (NO autoplay)
   mixAudio.volume = Number(mixVol.value);
   loadMix(0, false);
 
@@ -2511,125 +2583,152 @@
 
   resetGame();
   requestAnimationFrame(step);
+
+  // ===== Notatki =====
   const notesWin = document.getElementById("notesWin");
-const openSetlista = document.getElementById("openSetlista");
+  const openSetlista = document.getElementById("openSetlista");
 
-openSetlista.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  toggleWindow(notesWin, openSetlista);
-});
+  openSetlista.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    toggleWindow(notesWin, openSetlista);
+  });
 
-document.getElementById("notesClose").onclick = ()=> minimizeWindow(notesWin, openSetlista);
-document.getElementById("notesMin").onclick = ()=> minimizeWindow(notesWin, openSetlista);
+  document.getElementById("notesClose").onclick = ()=> minimizeWindow(notesWin, openSetlista);
+  document.getElementById("notesMin").onclick = ()=> minimizeWindow(notesWin, openSetlista);
 
-// ===== DRIVE + iCloud Photos =====
-const driveLauncher = document.getElementById("driveLauncher");
-const driveWin = document.getElementById("driveWin");
-const photosWin = document.getElementById("photosWin");
-const openIcloudPhotos = document.getElementById("openIcloudPhotos");
+  // ===== DRIVE + iCloud Photos =====
+  const driveLauncher = document.getElementById("driveLauncher");
+  const driveWin = document.getElementById("driveWin");
+  const photosWin = document.getElementById("photosWin");
+  const openIcloudPhotos = document.getElementById("openIcloudPhotos");
 
-wireWindowControls("drive", driveWin, driveLauncher);
-wireWindowControls("photos", photosWin, driveLauncher);
+  wireWindowControls("drive", driveWin, driveLauncher);
+  wireWindowControls("photos", photosWin, driveLauncher);
 
-driveLauncher.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  closeAllMenus(); closeIgPopup(); setOpen(false);
-  toggleWindow(driveWin, driveLauncher);
-});
+  driveLauncher.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    closeAllMenus(); closeIgPopup(); setOpen(false);
+    toggleWindow(driveWin, driveLauncher);
+  });
 
-openIcloudPhotos.addEventListener("click", (e)=>{
-  e.stopPropagation();
-
-  if (!driveWin.classList.contains("open")) openWindow(driveWin, driveLauncher);
-  openWindow(photosWin, openIcloudPhotos);
-
-  buildIcloudGrid(); // odśwież losowanie przy wejściu
-});
-
-// ===== iCloud Grid (80% fake) + viewer =====
-const icloudGrid = document.getElementById("icloudGrid");
-const icloudViewer = document.getElementById("icloudViewer");
-const icloudViewerImg = document.getElementById("icloudViewerImg");
-const icloudViewerClose = document.getElementById("icloudViewerClose");
-const icloudViewerTitle = document.getElementById("icloudViewerTitle");
-const icloudSearch = document.getElementById("icloudSearch");
-const icloudTabs = Array.from(document.querySelectorAll(".icloudTab"));
-
-
-const REAL_PHOTOS = ["p1.jpg","p2.jpg","p3.jpg","p4.jpg","p5.jpg","p6.jpg"];
-
-let currentFilter = ""; // z wyszukiwarki
-
-function buildIcloudGrid(){
-  if (!icloudGrid) return;
-  icloudGrid.innerHTML = "";
-
-  const totalTiles = 24;
-  const realPhotosFiltered = REAL_PHOTOS.filter(n =>
-    n.toLowerCase().includes(currentFilter.toLowerCase())
-  );
-
-  const realCount = Math.min(realPhotosFiltered.length, 10); // max 10 realnych, reszta fejk
-  const slots = new Set();
-  while (slots.size < realCount){
-    slots.add(Math.floor(Math.random() * totalTiles));
-  }
-
-  let idx = 0;
-
-  for (let i=0; i<totalTiles; i++){
-    const tile = document.createElement("div");
-    tile.className = "photoTile";
-
-    if (slots.has(i) && idx < realCount){
-      const src = realPhotosFiltered[idx++];
-      const img = document.createElement("img");
-      img.src = src;
-      img.alt = "";
-      tile.appendChild(img);
-
-      tile.addEventListener("click", ()=>{
-        icloudViewerImg.src = src;
-        icloudViewerTitle.textContent = src;
-        icloudViewer.classList.add("open");
-        icloudViewer.setAttribute("aria-hidden", "false");
-      });
-    } else {
-      tile.classList.add("loading");
-    }
-
-    icloudGrid.appendChild(tile);
-  }
-}
-
-icloudViewerClose.addEventListener("click", ()=>{
-  icloudViewer.classList.remove("open");
-  icloudViewer.setAttribute("aria-hidden", "true");
-  icloudViewerImg.src = "";
-});
-
-// ESC zamyka viewer
-window.addEventListener("keydown", (e)=>{
-  if (e.key === "Escape" && icloudViewer.classList.contains("open")){
-    icloudViewerClose.click();
-  }
-});
-
-// search
-icloudSearch?.addEventListener("input", ()=>{
-  currentFilter = icloudSearch.value || "";
-  buildIcloudGrid();
-});
-
-// tabs (na razie tylko UI + rebuild)
-icloudTabs.forEach(tab=>{
-  tab.addEventListener("click", ()=>{
-    icloudTabs.forEach(t=> t.classList.remove("active"));
-    tab.classList.add("active");
+  openIcloudPhotos.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    if (!driveWin.classList.contains("open")) openWindow(driveWin, driveLauncher);
+    openWindow(photosWin, openIcloudPhotos);
     buildIcloudGrid();
   });
-});
 
-</script>
+  // ===== iCloud Grid (80% fake) + viewer =====
+  const icloudGrid = document.getElementById("icloudGrid");
+  const icloudViewer = document.getElementById("icloudViewer");
+  const icloudViewerImg = document.getElementById("icloudViewerImg");
+  const icloudViewerClose = document.getElementById("icloudViewerClose");
+  const icloudViewerTitle = document.getElementById("icloudViewerTitle");
+  const icloudSearch = document.getElementById("icloudSearch");
+  const icloudTabs = Array.from(document.querySelectorAll(".icloudTab"));
+
+  const REAL_PHOTOS = ["p1.jpg","p2.jpg","p3.jpg","p4.jpg","p5.jpg","p6.jpg"];
+  let currentFilter = "";
+
+  function buildIcloudGrid(){
+    if (!icloudGrid) return;
+    icloudGrid.innerHTML = "";
+
+    const totalTiles = 24;
+    const realPhotosFiltered = REAL_PHOTOS.filter(n =>
+      n.toLowerCase().includes(currentFilter.toLowerCase())
+    );
+
+    const realCount = Math.min(realPhotosFiltered.length, 10);
+    const slots = new Set();
+    while (slots.size < realCount){
+      slots.add(Math.floor(Math.random() * totalTiles));
+    }
+
+    let idx = 0;
+
+    for (let i=0; i<totalTiles; i++){
+      const tile = document.createElement("div");
+      tile.className = "photoTile";
+
+      if (slots.has(i) && idx < realCount){
+        const src = realPhotosFiltered[idx++];
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        tile.appendChild(img);
+
+        tile.addEventListener("click", ()=>{
+          icloudViewerImg.src = src;
+          icloudViewerTitle.textContent = src;
+          icloudViewer.classList.add("open");
+          icloudViewer.setAttribute("aria-hidden", "false");
+        });
+      } else {
+        tile.classList.add("loading");
+      }
+
+      icloudGrid.appendChild(tile);
+    }
+  }
+
+  icloudViewerClose.addEventListener("click", ()=>{
+    icloudViewer.classList.remove("open");
+    icloudViewer.setAttribute("aria-hidden", "true");
+    icloudViewerImg.src = "";
+  });
+
+  window.addEventListener("keydown", (e)=>{
+    if (e.key === "Escape" && icloudViewer.classList.contains("open")){
+      icloudViewerClose.click();
+    }
+  });
+
+  icloudSearch?.addEventListener("input", ()=>{
+    currentFilter = icloudSearch.value || "";
+    buildIcloudGrid();
+  });
+
+  icloudTabs.forEach(tab=>{
+    tab.addEventListener("click", ()=>{
+      icloudTabs.forEach(t=> t.classList.remove("active"));
+      tab.classList.add("active");
+      buildIcloudGrid();
+    });
+  });
+
+  // ===== Taskbar mirror (clock + battery + wifi -> game) =====
+  (function(){
+    const tbClock = document.getElementById("tbClock");
+    const tbBat = document.getElementById("tbBat");
+    const tbWifi = document.getElementById("tbWifi");
+
+    function tbTick(){
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mm = String(d.getMinutes()).padStart(2,"0");
+      if (tbClock) tbClock.textContent = ${hh}:${mm};
+    }
+    tbTick();
+    setInterval(tbTick, 1000 * 10);
+
+    const srcBat = document.getElementById("batteryPct");
+    function mirrorBat(){
+      if (!tbBat) return;
+      if (srcBat && srcBat.textContent) tbBat.textContent = srcBat.textContent;
+    }
+    mirrorBat();
+    setInterval(mirrorBat, 1000 * 5);
+
+    if (tbWifi){
+      tbWifi.style.cursor = "pointer";
+      tbWifi.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        const old = document.getElementById("wifiBtn");
+        if (old) old.click();
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
