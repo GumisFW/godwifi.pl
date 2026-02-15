@@ -1428,7 +1428,7 @@
             <span class="lock-icon">🔐</span>
             <span>Hasło</span>
           </label>
-          <input type="password" class="login-input" id="loginPassword" placeholder="Wpisz hasło">
+          <input type="text" class="login-input" id="loginPassword" placeholder="Wpisz hasło" readonly style="cursor: text;">
         </div>
         
         <div class="login-actions">
@@ -2033,31 +2033,96 @@
   const loginSubmit = document.getElementById("loginSubmit");
   const loginCancel = document.getElementById("loginCancel");
   
+  let loginKeysPressed = 0;
+  const LOGIN_TEXT = "good_wifey";
+  
   function showLoginModal(){
     loginModal.classList.add("open");
     loginUsername.value = "";
     loginPassword.value = "";
+    loginKeysPressed = 0;
     setTimeout(() => loginUsername.focus(), 100);
   }
   
   function hideLoginModal(){
     loginModal.classList.remove("open");
+    loginKeysPressed = 0;
   }
   
   function attemptLogin(){
-    // Accept any input - just check if both fields have something
-    if (loginUsername.value.trim() && loginPassword.value.trim()) {
+    // Check if login is "good_wifey" and password has exactly 8 characters
+    if (loginUsername.value === LOGIN_TEXT && loginPassword.value.length === 8) {
       hideLoginModal();
       // Open drive window after successful "login"
       toggleWindow(driveWin, driveLauncher);
     } else {
-      // Shake animation for empty fields
+      // Shake animation for incorrect login
       loginModal.querySelector(".login-box").style.animation = "shake 0.3s";
       setTimeout(() => {
         loginModal.querySelector(".login-box").style.animation = "";
       }, 300);
     }
   }
+  
+  // Auto-fill login field with "good_wifey" when typing
+  loginUsername.addEventListener("keydown", (e) => {
+    // Prevent default typing
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      
+      if (loginKeysPressed < LOGIN_TEXT.length) {
+        loginUsername.value = LOGIN_TEXT.substring(0, loginKeysPressed + 1);
+        loginKeysPressed++;
+        
+        // Auto-focus password field when login is complete
+        if (loginKeysPressed === LOGIN_TEXT.length) {
+          setTimeout(() => loginPassword.focus(), 100);
+        }
+      }
+    }
+    
+    // Allow backspace
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      if (loginKeysPressed > 0) {
+        loginKeysPressed--;
+        loginUsername.value = LOGIN_TEXT.substring(0, loginKeysPressed);
+      }
+    }
+    
+    if (e.key === "Enter" && loginUsername.value === LOGIN_TEXT) {
+      loginPassword.focus();
+    }
+    if (e.key === "Escape") hideLoginModal();
+  });
+  
+  // Password field - accept any 8 characters
+  loginPassword.addEventListener("keydown", (e) => {
+    // Prevent default for regular keys
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      
+      if (loginPassword.value.length < 8) {
+        loginPassword.value += "•";
+        
+        // Auto-submit when 8 characters are entered
+        if (loginPassword.value.length === 8) {
+          setTimeout(() => attemptLogin(), 200);
+        }
+      }
+    }
+    
+    // Allow backspace
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      if (loginPassword.value.length > 0) {
+        loginPassword.value = loginPassword.value.slice(0, -1);
+      }
+    }
+    
+    if (e.key === "Enter") attemptLogin();
+    if (e.key === "Escape") hideLoginModal();
+  });
   
   loginSubmit.addEventListener("click", attemptLogin);
   
@@ -2068,17 +2133,6 @@
     if (e.target === loginModal) {
       hideLoginModal();
     }
-  });
-  
-  // Enter to submit, Escape to cancel
-  loginUsername.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") attemptLogin();
-    if (e.key === "Escape") hideLoginModal();
-  });
-  
-  loginPassword.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") attemptLogin();
-    if (e.key === "Escape") hideLoginModal();
   });
 
   wifiBtn.addEventListener("click", ()=>{
