@@ -10,55 +10,51 @@
 
 <style>
   :root{
-    --shadow: 0 50px 140px rgba(0,0,0,.55);
-    --border: rgba(255,255,255,.22);
-    --text: rgba(255,255,255,.92);
-    --muted: rgba(255,255,255,.72);
+    --shadow: 0 20px 60px rgba(0,0,0,.6);
+    --border: rgba(0,0,0,.3);
+    --text: rgba(255,255,255,.95);
+    --muted: rgba(255,255,255,.75);
 
-    --menuBg: rgba(255,255,255,.16);
-    --menuBorder: rgba(255,255,255,.18);
+    --taskbarBg: rgba(30,30,35,.96);
+    --taskbarBorder: rgba(255,255,255,.08);
 
-    --dockBg: rgba(255,255,255,.12);
-    --dockBorder: rgba(255,255,255,.16);
-
-    --glassA: rgba(255,255,255,.28);
-    --glassB: rgba(255,255,255,.14);
+    --windowBg: rgba(40,40,45,.95);
+    --windowBorder: rgba(255,255,255,.15);
+    
+    --titlebarBg: rgba(50,50,55,.98);
+    --titlebarBorder: rgba(255,255,255,.1);
   }
 
   *{ box-sizing:border-box; }
   html,body{ height:100%; }
   body{
     margin:0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Segoe UI, Roboto, Arial, sans-serif;
+    font-family: "Segoe UI", Ubuntu, "DejaVu Sans", Roboto, Arial, sans-serif;
     overflow:hidden;
     color:var(--text);
     user-select:none;
   }
 
-  /* ===== tapeta ===== */
+  /* ===== Wallpaper ===== */
   .wallpaper{
-    position:fixed; inset:-80px;
+    position:fixed; inset:0;
     background:
-      radial-gradient(900px 520px at 18% 18%, rgba(120,122,255,.28), transparent 60%),
-      radial-gradient(780px 420px at 86% 28%, rgba(255,120,200,.22), transparent 62%),
-      radial-gradient(820px 520px at 52% 86%, rgba(120,255,210,.18), transparent 62%),
-      radial-gradient(700px 500px at 45% 45%, rgba(255,255,255,.08), transparent 60%),
-      linear-gradient(180deg,#0f1220,#050509);
-    filter:saturate(125%) contrast(105%);
-    transform:translateZ(0);
+      radial-gradient(900px 520px at 25% 25%, rgba(80,120,255,.20), transparent 60%),
+      radial-gradient(780px 420px at 75% 35%, rgba(200,80,255,.18), transparent 62%),
+      radial-gradient(820px 520px at 50% 80%, rgba(80,200,255,.15), transparent 62%),
+      linear-gradient(180deg,#0a0c14,#050507);
+    filter:saturate(115%) contrast(105%);
   }
 
   .grain{
     position:fixed; inset:0;
     pointer-events:none;
-    opacity:.12;
+    opacity:.08;
     background-image:
-      radial-gradient(circle at 15% 25%, rgba(255,255,255,.08), transparent 35%),
-      radial-gradient(circle at 70% 65%, rgba(255,255,255,.06), transparent 40%);
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,.06), transparent 40%);
     mix-blend-mode: overlay;
   }
 
-  /* blurred brand logo in background */
   .brandBlur{
     position:fixed; inset:0;
     display:grid; place-items:center;
@@ -66,110 +62,120 @@
   }
   .brandBlur::before{
     content:"";
-    width:min(520px,78vw);
-    height:min(520px,78vw);
+    width:min(480px,75vw);
+    height:min(480px,75vw);
     background:url("freewifi.png") center/contain no-repeat;
-    opacity:.16;
-    filter: blur(120px) saturate(140%);
-    transform: scale(1.12);
+    opacity:.12;
+    filter: blur(100px) saturate(130%);
   }
 
-  /* ===== Top menu bar (zostaje w DOM, ale schowamy w override) ===== */
-  .menubar{
-    position:fixed; top:0; left:0; right:0;
-    height:32px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 12px;
-    background: rgba(255,255,255,.10);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-bottom:1px solid rgba(255,255,255,.12);
-    z-index:1000;
-  }
-
-  .menubar .left, .menubar .right{
-    display:flex; align-items:center; gap:12px;
-    font-size:13px;
-    color: rgba(255,255,255,.92);
-  }
-
-  .apple{
-    width:14px; height:14px;
-    display:inline-block;
-    border-radius:4px;
-    background: rgba(255,255,255,.85);
-    clip-path: polygon(55% 3%, 66% 10%, 64% 20%, 74% 25%, 82% 36%, 76% 52%, 66% 61%, 66% 76%, 57% 95%, 43% 95%, 35% 75%, 35% 60%, 24% 52%, 18% 36%, 26% 25%, 36% 20%, 34% 10%, 45% 3%);
-    opacity:.9;
-  }
-
-  .menuItem{
-    position:relative;
-    padding:4px 8px;
-    border-radius:8px;
-    cursor:default;
-  }
-  .menuItem.active,
-  .menuItem:hover{
-    background: rgba(255,255,255,.12);
-  }
-
-  .dropdown{
-    position:absolute;
-    top:30px;
+  /* ===== Windows-style Taskbar (bottom) ===== */
+  .taskbar{
+    position:fixed;
+    bottom:0;
     left:0;
-    min-width:190px;
-    padding:8px;
-    border-radius:14px;
-    background: var(--menuBg);
-    border:1px solid var(--menuBorder);
-    box-shadow: 0 30px 90px rgba(0,0,0,.45);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    display:none;
-  }
-  .menuItem.active .dropdown{ display:block; }
-  .dropdown a, .dropdown button{
+    right:0;
+    height:48px;
     display:flex;
-    width:100%;
-    gap:10px;
     align-items:center;
-    justify-content:space-between;
-    padding:10px 10px;
-    border-radius:12px;
-    color: rgba(255,255,255,.92);
-    text-decoration:none;
-    font-size:13px;
-    background: transparent;
-    border:0;
-    cursor:default;
-  }
-  .dropdown a:hover, .dropdown button:hover{
-    background: rgba(255,255,255,.12);
-  }
-  .kbd{
-    opacity:.7;
-    font-variant-numeric: tabular-nums;
-    font-size:12px;
+    padding:0 8px;
+    background: var(--taskbarBg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top:1px solid var(--taskbarBorder);
+    z-index:1000;
+    box-shadow: 0 -2px 20px rgba(0,0,0,.4);
   }
 
-  /* ===== Bateryjka (źródło danych zostaje; na taskbarze robimy mirror) ===== */
-  .battery{
+  .taskbar-left{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    flex:1;
+  }
+
+  .start-btn{
+    width:48px;
+    height:36px;
+    display:grid;
+    place-items:center;
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:4px;
+    cursor:pointer;
+    font-size:20px;
+    transition:.15s ease;
+  }
+  .start-btn:hover{
+    background: rgba(255,255,255,.14);
+  }
+
+  .taskbar-app{
+    height:36px;
+    min-width:160px;
+    max-width:200px;
+    padding:0 12px;
     display:flex;
     align-items:center;
     gap:8px;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:4px;
+    cursor:pointer;
+    transition:.15s ease;
+    font-size:13px;
+  }
+  .taskbar-app:hover{
+    background: rgba(255,255,255,.12);
+  }
+  .taskbar-app.active{
+    background: rgba(255,255,255,.14);
+    border-bottom:2px solid rgba(80,150,255,.9);
+  }
+
+  .taskbar-icon{
+    width:20px;
+    height:20px;
+    object-fit:contain;
+  }
+
+  .taskbar-right{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    font-size:13px;
+  }
+
+  .system-tray{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .tray-icon{
+    padding:6px 10px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .tray-icon:hover{
+    background: rgba(255,255,255,.1);
+  }
+
+  .battery{
+    display:flex;
+    align-items:center;
+    gap:6px;
     font-size:12px;
-    opacity:.92;
   }
   .batteryIcon{
-    width:26px;
-    height:12px;
-    border-radius:4px;
-    border:1px solid rgba(255,255,255,.35);
+    width:22px;
+    height:11px;
+    border-radius:3px;
+    border:1.5px solid rgba(255,255,255,.4);
     position:relative;
     overflow:hidden;
-    background: rgba(255,255,255,.10);
+    background: rgba(0,0,0,.3);
   }
   .batteryLevel{
     position:absolute;
@@ -179,125 +185,62 @@
   }
   .batteryCap{
     position:absolute;
-    right:-3px;
-    top:3px;
-    width:3px;
+    right:-2.5px;
+    top:2px;
+    width:2.5px;
     height:6px;
     border-radius:2px;
-    background: rgba(255,255,255,.35);
-  }
-  .batteryBolt{
-    position:absolute;
-    inset:0;
-    display:grid;
-    place-items:center;
-    font-size:10px;
-    opacity:0;
-    transform: translateY(-.5px);
-  }
-  .batteryPct{
-    font-variant-numeric: tabular-nums;
-    opacity:.9;
+    background: rgba(255,255,255,.4);
   }
 
-  .wifiBtn{
-    opacity:.92;
-    padding:2px 6px;
-    border-radius:8px;
-    cursor:pointer;
-  }
-  .wifiBtn:hover{ background: rgba(255,255,255,.12); }
-
-  /* ===== NOTES WINDOW ===== */
-  .app.notes{ width: min(860px, 96vw); }
-  .notesWrap{
-    display:flex;
-    min-height:420px;
-    height: min(60vh,600px);
-    background: rgba(255,255,255,.08);
-  }
-  .notesSidebar{
-    width:240px;
-    border-right:1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.06);
-    backdrop-filter: blur(18px);
-    padding:12px;
-  }
-  .notesSideTitle{
-    font-size:12px;
-    opacity:.7;
-    margin-bottom:8px;
-  }
-  .notesItem{
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:12px;
-    padding:10px;
-  }
-  .notesEditor{
-    flex:1;
-    padding:18px;
-  }
-  .notePaper{
-    background: rgba(255,255,255,.05);
-    border-radius:14px;
-    padding:16px;
-    border:1px solid rgba(255,255,255,.12);
-  }
-
-  /* ===== Desktop icons ===== */
+  /* ===== Desktop icons (Ubuntu-style grid) ===== */
   .icons{
     position:fixed;
-    top:56px;
+    top:20px;
     left:20px;
     display:grid;
-    gap:16px;
+    gap:20px;
     z-index:10;
-    color:rgba(255,255,255,.90);
-  }
-  .icon{
-    width: clamp(64px, 7.5vw, 92px);
-    text-align:center;
-    font-size: clamp(11px, 1.2vw, 13px);
-    line-height:1.2;
-    text-shadow: 0 2px 10px rgba(0,0,0,.35);
-    cursor:pointer;
-  }
-  .icon .pic{
-    width: clamp(44px, 5.2vw, 56px);
-    aspect-ratio: 1 / 1;
-    margin:0 auto 6px;
-    border-radius: clamp(12px, 1.6vw, 16px);
-    display:grid;
-    place-items:center;
-    background: rgba(255,255,255,.14);
-    border:1px solid rgba(255,255,255,.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 12px 30px rgba(0,0,0,.28);
-    transform: translateZ(0);
-    transition: transform .14s ease, background .14s ease;
-  }
-  .icon:hover .pic{
-    transform: translateZ(0) scale(1.04);
-    background: rgba(255,255,255,.18);
-  }
-  .deskIconImg{
-    width: 62%;
-    height: 62%;
-    object-fit: cover;
-    display:block;
-    pointer-events:none;
-    filter: drop-shadow(0 8px 14px rgba(0,0,0,.20));
-    opacity: .95;
-    transform: translateZ(0);
-    border-radius: 12px;
   }
 
-  /* ===== Window system ===== */
+  .icon{
+    width:80px;
+    text-align:center;
+    font-size:12px;
+    line-height:1.3;
+    text-shadow: 0 1px 3px rgba(0,0,0,.8);
+    cursor:pointer;
+  }
+
+  .icon .pic{
+    width:56px;
+    height:56px;
+    margin:0 auto 8px;
+    border-radius:8px;
+    display:grid;
+    place-items:center;
+    background: rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    transition:.15s ease;
+  }
+  .icon:hover .pic{
+    transform: scale(1.05);
+    background: rgba(255,255,255,.15);
+  }
+
+  .deskIconImg{
+    width:65%;
+    height:65%;
+    object-fit:cover;
+    border-radius:6px;
+  }
+
+  /* ===== Window system (Windows/Ubuntu hybrid) ===== */
   .stage{
     position:fixed;
-    inset:0;
+    inset:0 0 48px 0;
     z-index:200;
     pointer-events:none;
   }
@@ -305,65 +248,92 @@
   .app{
     position:fixed;
     left:50%;
-    top: calc(50% + 14px);
-    width:min(560px, 92vw);
-    border-radius:22px;
+    top:50%;
+    width:min(600px, 90vw);
+    border-radius:8px 8px 0 0;
     overflow:hidden;
-    background: linear-gradient(180deg, var(--glassA), var(--glassB));
-    border:1px solid var(--border);
+    background: var(--windowBg);
+    border:1px solid var(--windowBorder);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(26px);
-    -webkit-backdrop-filter: blur(26px);
-    will-change: transform, opacity;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
     opacity:0;
     pointer-events:none;
-
-    transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985);
-    transition: transform .20s ease, opacity .18s ease;
+    transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.96);
+    transition: transform .18s ease, opacity .15s ease;
   }
 
   .app.open{
     opacity:1;
     pointer-events:auto;
+    transform: translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(1);
   }
 
   .app.dragging{
     transition:none !important;
-    cursor:grabbing;
+    cursor:move;
   }
 
+  /* Ubuntu-style titlebar */
   .titlebar{
-    height:44px;
+    height:36px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 14px;
-    background: rgba(255,255,255,.14);
-    border-bottom:1px solid rgba(255,255,255,.14);
-    cursor:grab;
+    padding:0 12px;
+    background: var(--titlebarBg);
+    border-bottom:1px solid var(--titlebarBorder);
+    cursor:move;
   }
 
-  .traffic{ display:flex; gap:8px; align-items:center; }
-  .dot{
-    width:12px; height:12px; border-radius:50%;
-    border:0; padding:0;
+  .window-controls{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  
+  .win-btn{
+    width:28px;
+    height:28px;
+    border-radius:4px;
+    border:0;
+    padding:0;
     cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    display:grid;
+    place-items:center;
+    transition:.12s ease;
   }
-  .dot:active{ transform: scale(.95); }
-
-  .red{ background:#ff5f57; }
-  .yellow{ background:#ffbd2e; }
-  .green{ background:#28c840; }
+  
+  .win-btn.minimize{
+    background: rgba(255,189,46,.85);
+    color: rgba(0,0,0,.8);
+  }
+  .win-btn.minimize:hover{ background: rgba(255,189,46,1); }
+  
+  .win-btn.maximize{
+    background: rgba(40,200,100,.85);
+    color: rgba(0,0,0,.8);
+  }
+  .win-btn.maximize:hover{ background: rgba(40,200,100,1); }
+  
+  .win-btn.close{
+    background: rgba(255,95,87,.85);
+    color: rgba(255,255,255,.95);
+  }
+  .win-btn.close:hover{ background: rgba(255,95,87,1); }
 
   .title{
     font-size:13px;
-    color: rgba(255,255,255,.85);
-    letter-spacing:.2px;
+    font-weight:600;
+    color: rgba(255,255,255,.9);
+    letter-spacing:.3px;
   }
 
   .content{
-    padding: 34px 28px 26px;
+    padding:32px 24px 24px;
     text-align:center;
   }
 
@@ -374,14 +344,14 @@
     cursor:pointer;
   }
   .logo{
-    width:min(320px, 72vw);
+    width:min(300px, 70vw);
     height:auto;
     display:block;
     margin:0 auto;
-    filter: drop-shadow(0 18px 35px rgba(0,0,0,.35));
-    transition: transform .22s ease, opacity .22s ease;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,.4));
+    transition:.2s ease;
   }
-  .logoBtn:hover .logo{ transform: scale(1.04); opacity:.96; }
+  .logoBtn:hover .logo{ transform: scale(1.03); }
   .hint{ margin-top:12px; font-size:13px; color: var(--muted); }
 
   .menuWrap{
@@ -389,877 +359,436 @@
     overflow:hidden;
     max-height:0;
     opacity:0;
-    transform: translateY(-10px) scale(.97);
-    transition: all .40s cubic-bezier(.2,.9,.2,1);
+    transform: translateY(-8px);
+    transition: all .35s ease;
   }
   .menuWrap.open{
-    max-height:420px;
+    max-height:400px;
     opacity:1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
-  .menu{ display:grid; gap:14px; }
+  .menu{ display:grid; gap:12px; }
 
   .menu a{
     text-decoration:none;
-    color: rgba(255,255,255,.92);
-    border-radius:999px;
-    padding:14px 18px;
-    font-size:15px;
+    color: rgba(255,255,255,.95);
+    border-radius:6px;
+    padding:13px 16px;
+    font-size:14px;
     font-weight:600;
     text-align:center;
-
-    background: rgba(255,255,255,.16);
-    border:1px solid rgba(255,255,255,.20);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
-    box-shadow:
-      0 14px 34px rgba(0,0,0,.32),
-      inset 0 1px 0 rgba(255,255,255,.28);
-
-    transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    background: rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    transition:.15s ease;
   }
   .menu a:hover{
-    background: rgba(255,255,255,.22);
-    transform: translateY(-2px) scale(1.01);
-    box-shadow:
-      0 20px 50px rgba(0,0,0,.38),
-      inset 0 1px 0 rgba(255,255,255,.38);
+    background: rgba(255,255,255,.18);
+    transform: translateY(-1px);
   }
-  .menu a:active{ transform: scale(.985); }
-
   .menu a.discord{
-    background: rgba(88,101,242,.92);
-    border:1px solid rgba(255,255,255,.22);
-    box-shadow:
-      0 18px 44px rgba(88,101,242,.32),
-      inset 0 1px 0 rgba(255,255,255,.26);
+    background: rgba(88,101,242,.9);
+    border:1px solid rgba(255,255,255,.2);
   }
   .menu a.discord:hover{ background: rgba(88,101,242,1); }
 
-  /* ===== Finder windows ===== */
-  .app.finder{ width:min(680px, 92vw); }
-  .finderBody{ padding: 18px 18px 22px; }
+  /* ===== Finder/File manager ===== */
+  .app.finder{ width:min(720px, 92vw); }
+  .finderBody{ padding:16px; }
   .finderGrid{
     display:grid;
-    grid-template-columns: repeat(4, minmax(90px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    gap:12px;
   }
   .finderItem{
     border:0;
-    background: rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:16px;
-    padding:12px 10px;
-    color: rgba(255,255,255,.92);
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:6px;
+    padding:14px 12px;
+    color: rgba(255,255,255,.95);
     display:grid;
     place-items:center;
     gap:8px;
     cursor:pointer;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 12px 28px rgba(0,0,0,.22);
-    transition: .15s ease;
+    transition:.12s ease;
   }
   .finderItem:hover{
-    transform: translateY(-2px);
     background: rgba(255,255,255,.14);
+    transform: translateY(-2px);
   }
   .finderIcon{
-    width:42px;
-    height:42px;
+    width:40px;
+    height:40px;
     object-fit:contain;
-    filter: drop-shadow(0 10px 16px rgba(0,0,0,.22));
   }
-  .finderItem span{ font-size:12px; opacity:.9; }
+  .finderItem span{ font-size:12px; }
   .finderPath{
     font-size:12px;
-    opacity:.75;
-    padding: 12px 18px 0;
+    opacity:.7;
+    padding:10px 16px;
+    background: rgba(0,0,0,.2);
+    border-bottom:1px solid rgba(255,255,255,.08);
   }
   .fileBadge{
     font-size:11px;
-    opacity:.7;
+    opacity:.65;
     margin-top:-4px;
   }
-  @media (max-width:520px){
-    .finderGrid{ grid-template-columns: repeat(3, minmax(90px, 1fr)); }
+
+  /* ===== Notes ===== */
+  .app.notes{ width: min(820px, 94vw); }
+  .notesWrap{
+    display:flex;
+    min-height:400px;
+    height:min(58vh,580px);
+    background: rgba(30,30,35,.95);
+  }
+  .notesSidebar{
+    width:220px;
+    border-right:1px solid rgba(255,255,255,.1);
+    background: rgba(20,20,25,.95);
+    padding:12px;
+  }
+  .notesSideTitle{
+    font-size:12px;
+    opacity:.7;
+    margin-bottom:8px;
+  }
+  .notesItem{
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:6px;
+    padding:10px;
+  }
+  .notesEditor{
+    flex:1;
+    padding:16px;
+  }
+  .notePaper{
+    background: rgba(255,255,255,.05);
+    border-radius:6px;
+    padding:16px;
+    border:1px solid rgba(255,255,255,.1);
   }
 
-  /* ===== Game window ===== */
-  .app.game{ width: min(760px, 96vw); }
-  .gameWrap{ padding: 14px 18px 18px; text-align:left; }
+  /* ===== Game ===== */
+  .app.game{ width: min(780px, 96vw); }
+  .gameWrap{ padding:16px; text-align:left; }
   .gameTop{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:12px;
     margin-bottom:10px;
     font-size:13px;
-    opacity:.9;
   }
   canvas#dinoCanvas{
     width:100%;
     height:220px;
-    display:block;
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.08);
-    box-shadow: 0 18px 44px rgba(0,0,0,.30);
-    backdrop-filter: blur(10px);
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(20,20,25,.9);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
   }
-  .gameHint{ margin-top:10px; font-size:12px; opacity:.75; }
+  .gameHint{ margin-top:10px; font-size:12px; opacity:.7; }
 
-  /* ===== Dock (zostaje – przeniesiemy do taskbara w HTML) ===== */
-  .dock{
-    position:fixed;
-    left:50%;
-    bottom:14px;
-    transform:translateX(-50%);
-    display:flex;
-    gap: var(--dockGap, 10px);
-    padding:10px 12px;
-    border-radius:22px;
-    background: var(--dockBg);
-    border:1px solid var(--dockBorder);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    box-shadow: 0 30px 90px rgba(0,0,0,.45);
-    z-index:900;
-    align-items:flex-end;
-  }
-
-  .appicon{
-    width:46px; height:46px;
-    border-radius:14px;
-    background: rgba(255,255,255,.16);
-    border:1px solid rgba(255,255,255,.18);
-    display:grid;
-    place-items:center;
-    position:relative;
-    transform: translateY(var(--lift, 0px)) scale(var(--scale, 1));
-    transform-origin: 50% 100%;
-    transition: background .12s ease;
-    cursor:pointer;
-    will-change: transform;
-
-    margin-left: var(--ml, 0px);
-    margin-right: var(--mr, 0px);
-  }
-  .appicon:hover{ background: rgba(255,255,255,.22); }
-
-  .appicon .runDot{
-    position:absolute;
-    bottom:-7px;
-    width:6px; height:6px;
-    border-radius:50%;
-    background: rgba(255,255,255,.75);
-    opacity:.55;
-  }
-
-  .dockimg{
-    width:28px;
-    height:28px;
-    object-fit:cover;
-    display:block;
-    pointer-events:none;
-    border-radius:8px;
-    overflow:hidden;
-    filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
-  }
-
-  /* macOS-like IG popup */
-  .dockPopup{
-    position:absolute;
-    left:50%;
-    bottom:62px;
-    transform:translateX(-50%) translateY(8px) scale(.98);
-    width: 240px;
-
-    padding:10px;
-    border-radius:16px;
-    background: rgba(255,255,255,.18);
-    border: 1px solid rgba(255,255,255,.20);
-    box-shadow: 0 26px 90px rgba(0,0,0,.48);
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    opacity:0;
-    pointer-events:none;
-    transition: .18s ease;
-    z-index:2000;
-  }
-  .appicon.showPopup .dockPopup{
-    opacity:1;
-    pointer-events:auto;
-    transform:translateX(-50%) translateY(0) scale(1);
-  }
-
-  .dockPopupHeader{
-    font-size:12px;
-    color: rgba(255,255,255,.78);
-    padding: 4px 8px 8px;
-    letter-spacing:.2px;
-  }
-  .dockSep{
-    height:1px;
-    background: rgba(255,255,255,.16);
-    margin: 6px 6px;
-    border-radius:999px;
-  }
-
-  .dockItem{
-    width:100%;
-    border:0;
-    background: transparent;
-    color: rgba(255,255,255,.92);
-    padding:10px 10px;
-    border-radius:12px;
-    font-size:13px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    cursor:pointer;
-    transition:.14s ease;
-  }
-  .dockItem:hover{
-    background: rgba(255,255,255,.14);
-    transform: translateY(-1px);
-  }
-  .dockItemLeft{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .dockTiny{
-    width:16px; height:16px;
-    object-fit:contain;
-    border-radius:4px;
-    opacity:.95;
-    pointer-events:none;
-  }
-  .dockItemHint{ font-size:12px; opacity:.65; }
-
-  @media (max-width:420px){
-    .dock{ gap:8px; padding:8px 10px; }
-    .appicon{ width:42px; height:42px; border-radius:13px; }
-    .dockPopup{ width: 220px; }
-  }
-
-  /* ===== macOS MIX PLAYER===== */
-  .player{
-    padding: 18px 18px 20px;
-    text-align:left;
-  }
-
+  /* ===== Player ===== */
+  .player{ padding:16px; text-align:left; }
   .playerBar{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding: 10px 12px;
-    border-radius: 16px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.14);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 16px 36px rgba(0,0,0,.22);
+    padding:10px 12px;
+    border-radius:6px;
+    background: rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
   }
-
-  .now{ min-width: 0; }
+  .now{ min-width:0; }
   .now .title{
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255,255,255,.92);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
-  .now .meta{
-    font-size: 12px;
-    opacity:.72;
-    margin-top:2px;
-  }
-
-  .ctrl{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-
+  .now .meta{ font-size:12px; opacity:.7; margin-top:2px; }
+  .ctrl{ display:flex; gap:8px; }
   .mbtn{
-    width:34px;
-    height:34px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.10);
-    color: rgba(255,255,255,.92);
+    width:32px; height:32px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.08);
+    color: var(--text);
     cursor:pointer;
     display:grid;
     place-items:center;
-    transition: .14s ease;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.14);
+    transition:.12s ease;
   }
-  .mbtn:hover{ background: rgba(255,255,255,.14); transform: translateY(-1px); }
-  .mbtn:active{ transform: scale(.98); }
-  .mbtn.on{
-    background: rgba(255,255,255,.22);
-    border-color: rgba(255,255,255,.22);
-  }
-  .playBig{
-    width:44px; height:44px;
-    border-radius: 14px;
-    font-weight:700;
-  }
-
-  .vol{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    min-width: 160px;
-  }
-  .vol span{ font-size:12px; opacity:.7; }
-  .vol input[type="range"]{
-    width: 120px;
-    accent-color: rgba(255,255,255,.92);
-  }
-
+  .mbtn:hover{ background: rgba(255,255,255,.14); }
+  .mbtn.on{ background: rgba(80,150,255,.6); }
+  .playBig{ width:40px; height:40px; font-weight:700; }
+  .vol{ display:flex; gap:8px; min-width:140px; align-items:center; }
+  .vol span{ font-size:12px; }
+  .vol input[type="range"]{ width:100px; }
   .progress{
-    margin-top: 14px;
-    padding: 10px 12px;
-    border-radius: 16px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.12);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:6px;
+    background: rgba(0,0,0,.2);
+    border:1px solid rgba(255,255,255,.1);
   }
-
   .pbar{
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.12);
+    height:8px;
+    border-radius:4px;
+    background: rgba(255,255,255,.1);
     overflow:hidden;
     cursor:pointer;
   }
   .pfill{
     height:100%;
     width:0%;
-    background: rgba(255,255,255,.85);
-    border-radius:999px;
+    background: rgba(80,150,255,.9);
+    border-radius:4px;
   }
-
   .timeRow{
     display:flex;
     justify-content:space-between;
-    font-variant-numeric: tabular-nums;
     font-size:12px;
-    opacity:.75;
-    margin-top:8px;
+    opacity:.7;
+    margin-top:6px;
   }
-
   .trackList{
-    margin-top: 14px;
-    border-radius: 16px;
+    margin-top:12px;
+    border-radius:6px;
     overflow:hidden;
-    border: 1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.06);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    border:1px solid rgba(255,255,255,.1);
+    background: rgba(0,0,0,.2);
   }
-
   .track{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:14px;
-    padding: 12px 12px;
+    padding:12px;
     cursor:pointer;
-    border-bottom: 1px solid rgba(255,255,255,.10);
-    transition: .14s ease;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    transition:.12s ease;
   }
   .track:last-child{ border-bottom:0; }
-
   .track .left{ min-width:0; }
   .track .name{
     font-size:13px;
     font-weight:600;
-    color: rgba(255,255,255,.90);
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .track .sub{
+  .track .sub{ font-size:12px; opacity:.65; margin-top:2px; }
+  .track .right{ font-size:12px; opacity:.7; }
+  .track:hover{ background: rgba(255,255,255,.06); }
+  .track.active{ background: rgba(80,150,255,.2); }
+  .playerHint{ margin-top:10px; font-size:12px; opacity:.7; }
+
+  /* ===== iCloud Photos ===== */
+  .icloudTop{
+    padding:12px 16px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .icloudH1{ font-size:14px; font-weight:800; }
+  .icloudTabs{
+    margin-top:8px;
+    display:flex;
+    gap:6px;
+  }
+  .icloudTab{
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.08);
+    padding:6px 12px;
+    border-radius:4px;
+    cursor:pointer;
     font-size:12px;
-    opacity:.68;
-    margin-top:2px;
+    transition:.12s ease;
   }
-  .track .right{
+  .icloudTab:hover{ background: rgba(255,255,255,.12); }
+  .icloudTab.active{
+    background: rgba(80,150,255,.6);
+    border-color: rgba(80,150,255,.8);
+  }
+  .icloudSearch{
+    width:min(240px, 40vw);
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.3);
+    color: var(--text);
+    padding:8px 12px;
+    border-radius:4px;
+    outline:none;
+  }
+  .icloudGrid{
+    padding:16px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap:10px;
+  }
+  .photoTile{
+    aspect-ratio:1/1;
+    border-radius:6px;
+    overflow:hidden;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    cursor:pointer;
+    transition:.12s ease;
+  }
+  .photoTile:hover{ transform: scale(1.02); }
+  .photoTile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .photoTile.loading{
+    cursor:default;
+    background: linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.1), rgba(255,255,255,.04));
+    background-size:240px 100%;
+    animation: shimmer 1.2s infinite linear;
+  }
+  @keyframes shimmer{
+    0%{ background-position:-240px 0; }
+    100%{ background-position:240px 0; }
+  }
+
+  .icloudViewer{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(16px);
+    display:none;
+  }
+  .icloudViewer.open{ display:block; }
+  .icloudViewerTop{
+    height:48px;
+    padding:0 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    background: rgba(30,30,35,.95);
+  }
+  .icloudViewerBtn{
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.1);
+    color: var(--text);
+    padding:8px 16px;
+    border-radius:4px;
+    cursor:pointer;
+    font-weight:600;
     font-size:12px;
-    opacity:.70;
-    font-variant-numeric: tabular-nums;
+    transition:.12s ease;
+  }
+  .icloudViewerBtn:hover{ background: rgba(255,255,255,.15); }
+  .icloudViewerTitle{ font-size:13px; font-weight:700; }
+  .icloudViewerBody{
+    height:calc(100vh - 48px);
+    display:grid;
+    place-items:center;
+    padding:16px;
+  }
+  .icloudViewerBody img{
+    max-width:min(960px, 94vw);
+    max-height:min(700px, 80vh);
+    border-radius:6px;
+    box-shadow: 0 20px 80px rgba(0,0,0,.7);
+    object-fit:contain;
   }
 
-  .track:hover{ background: rgba(255,255,255,.08); }
-  .track.active{ background: rgba(255,255,255,.14); }
-  .track.active .name{ color: rgba(255,255,255,.98); }
-
-  .playerHint{
-    margin-top: 10px;
-    font-size: 12px;
-    opacity: .72;
-  }
-
-  @media (max-width:520px){
-    .vol{ min-width: 120px; }
-    .vol input[type="range"]{ width: 90px; }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .app, .menuWrap, .logo{ transition:none !important; }
-  }
-
-  /* ===== Mobile block screen ===== */
+  /* ===== Mobile block ===== */
   .mobileBlock{
     position:fixed;
     inset:0;
     z-index:9999;
     display:none;
-    padding:22px;
-    color: rgba(255,255,255,.92);
+    padding:20px;
     background:
-      radial-gradient(900px 520px at 18% 18%, rgba(120,122,255,.28), transparent 60%),
-      radial-gradient(780px 420px at 86% 28%, rgba(255,120,200,.22), transparent 62%),
-      radial-gradient(820px 520px at 52% 86%, rgba(120,255,210,.18), transparent 62%),
-      linear-gradient(180deg,#0f1220,#050509);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+      radial-gradient(800px 500px at 20% 20%, rgba(80,120,255,.18), transparent 60%),
+      linear-gradient(180deg,#0a0c14,#050507);
   }
-
   .mobileBlockCard{
-    max-width:520px;
+    max-width:480px;
     margin:0 auto;
-    border-radius:22px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(40,40,45,.95);
+    box-shadow: 0 30px 90px rgba(0,0,0,.6);
+    padding:20px;
+  }
+  .mobileH1{ font-size:18px; margin:0 0 12px; }
+  .mobileP{ margin:0 0 16px; line-height:1.4; font-size:14px; }
+  .mobileActions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .mobileBtn{
     border:1px solid rgba(255,255,255,.18);
     background: rgba(255,255,255,.12);
-    box-shadow: 0 50px 140px rgba(0,0,0,.55);
-    padding:18px 18px 16px;
-  }
-
-  .mobileBlockTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:14px;
-    padding:8px 10px;
-    border-radius:16px;
-    background: rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.12);
-  }
-
-  .mobileTraffic{ display:flex; gap:8px; }
-  .mobileDot{ width:12px; height:12px; border-radius:50%; }
-  .mobileDot.red{ background:#ff5f57; }
-  .mobileDot.yellow{ background:#ffbd2e; }
-  .mobileDot.green{ background:#28c840; }
-
-  .mobileTitle{
-    font-size:13px;
-    opacity:.88;
-  }
-
-  .mobileBlockBody{
-    padding:6px 6px 0;
-    text-align:left;
-  }
-
-  .mobileH1{
-    font-size:18px;
-    margin:8px 0 8px;
-    letter-spacing:.2px;
-  }
-
-  .mobileP{
-    margin:0 0 14px;
-    opacity:.85;
-    line-height:1.35;
-    font-size:14px;
-  }
-
-  .mobileMeta{
-    font-size:12px;
-    opacity:.7;
-    margin-top:10px;
-  }
-
-  .mobileActions{
-    display:flex;
-    gap:10px;
-    margin-top:14px;
-    flex-wrap:wrap;
-  }
-
-  .mobileBtn{
-    border:1px solid rgba(255,255,255,.20);
-    background: rgba(255,255,255,.14);
-    color: rgba(255,255,255,.92);
-    padding:10px 12px;
-    border-radius:999px;
+    color: var(--text);
+    padding:10px 16px;
+    border-radius:4px;
     cursor:pointer;
     font-weight:600;
     font-size:13px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    transition:.15s ease;
+    transition:.12s ease;
   }
-
-  .mobileBtn:hover{ background: rgba(255,255,255,.20); }
+  .mobileBtn:hover{ background: rgba(255,255,255,.18); }
   .mobileBtn.primary{
-    background: rgba(88,101,242,.92);
-    border-color: rgba(255,255,255,.18);
+    background: rgba(88,101,242,.9);
+    border-color: rgba(255,255,255,.2);
   }
   .mobileBtn.primary:hover{ background: rgba(88,101,242,1); }
+  .mobileMeta{ font-size:12px; opacity:.65; margin-top:12px; }
 
-  /* ===== iCloud Photos UI ===== */
-  .icloudTop{
-    padding:12px 16px 10px;
-    border-bottom:1px solid rgba(255,255,255,.12);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:12px;
+  @media (max-width:520px){
+    .finderGrid{ grid-template-columns: repeat(3, minmax(90px, 1fr)); }
+    .icloudGrid{ grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+    .taskbar-app{ min-width:120px; }
   }
 
-  .icloudH1{
-    font-size:14px;
-    font-weight:800;
-    letter-spacing:.2px;
-    opacity:.95;
+  @media (prefers-reduced-motion: reduce){
+    .app, .menuWrap{ transition:none !important; }
   }
-
-  .icloudTabs{
-    margin-top:8px;
-    display:flex;
-    gap:8px;
-  }
-
-  .icloudTab{
-    border:1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.10);
-    color: rgba(255,255,255,.92);
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:12px;
-  }
-  .icloudTab.active{
-    background: rgba(255,255,255,.22);
-    border-color: rgba(255,255,255,.22);
-  }
-
-  .icloudSearch{
-    width:min(260px, 40vw);
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(0,0,0,.18);
-    color: rgba(255,255,255,.92);
-    padding:9px 12px;
-    border-radius:12px;
-    outline:none;
-  }
-
-  .icloudGrid{
-    padding:16px;
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap:10px;
-  }
-
-  .photoTile{
-    aspect-ratio: 1 / 1;
-    border-radius:14px;
-    overflow:hidden;
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.10);
-    position:relative;
-    cursor:pointer;
-  }
-
-  .photoTile img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-
-  .photoTile.loading{
-    cursor:default;
-    background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
-    background-size: 240px 100%;
-    animation: shimmer 1.15s infinite linear;
-  }
-  @keyframes shimmer{
-    0%{ background-position: -240px 0; }
-    100%{ background-position: 240px 0; }
-  }
-
-  /* ===== iCloud Viewer ===== */
-  .icloudViewer{
-    position:fixed;
-    inset:0;
-    z-index:5000;
-    background: rgba(0,0,0,.72);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    display:none;
-  }
-  .icloudViewer.open{ display:block; }
-
-  .icloudViewerTop{
-    height:54px;
-    padding:0 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    border-bottom:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.06);
-  }
-
-  .icloudViewerBtn{
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(255,255,255,.10);
-    color: rgba(255,255,255,.92);
-    padding:8px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:12px;
-  }
-
-  .icloudViewerTitle{
-    font-size:13px;
-    opacity:.85;
-    font-weight:700;
-  }
-
-  .icloudViewerBody{
-    height: calc(100vh - 54px);
-    display:grid;
-    place-items:center;
-    padding:16px;
-  }
-
-  .icloudViewerBody img{
-    max-width:min(980px, 96vw);
-    max-height:min(720px, 82vh);
-    border-radius:18px;
-    border:1px solid rgba(255,255,255,.12);
-    box-shadow: 0 40px 140px rgba(0,0,0,.55);
-    object-fit:contain;
-    background: rgba(255,255,255,.06);
-  }
-
-  /* =========================================================
-     WIN/UBUNTU THEME OVERRIDE (zostawia funkcje, zmienia wygląd)
-     ========================================================= */
-
-  /* chowamy macOS menubar */
-  .menubar{ display:none !important; }
-
-  /* robimy miejsce na taskbar */
-  body{ padding-bottom:48px; }
-
-  /* taskbar */
-  .taskbar{
-    position:fixed;
-    left:0; right:0; bottom:0;
-    height:48px;
-    padding:0 10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    z-index: 20000;
-
-    background: rgba(20,22,28,.78);
-    border-top: 1px solid rgba(255,255,255,.10);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-  }
-  .taskLeft,.taskCenter,.taskRight{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .taskLeft{ min-width:120px; }
-  .taskCenter{ flex:1; justify-content:center; }
-  .taskRight{ min-width:220px; justify-content:flex-end; font-size:12px; opacity:.92; font-variant-numeric: tabular-nums; }
-
-  .startBtn{
-    width:36px; height:36px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.08);
-    cursor:pointer;
-    display:grid;
-    place-items:center;
-  }
-  .startBtn:active{ transform:scale(.98); }
-  .startMark{
-    width:16px; height:16px;
-    border-radius:4px;
-    background: linear-gradient(90deg, rgba(0,255,180,.95), rgba(60,140,255,.95));
-    box-shadow: 0 10px 26px rgba(0,0,0,.35);
-  }
-
-  #tbWifi{
-    padding:6px 8px;
-    border-radius:10px;
-    cursor:pointer;
-  }
-  #tbWifi:hover{ background: rgba(255,255,255,.08); }
-
-  /* dock jako pasek ikon w taskbar */
-  .dock{
-    position:static !important;
-    left:auto !important;
-    bottom:auto !important;
-    transform:none !important;
-    padding:6px 8px;
-    border-radius:12px;
-    background: rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow: none;
-  }
-
-  /* okna bardziej win/ubuntu */
-  .app{
-    border-radius: 12px !important;
-    background: rgba(18,20,26,.86) !important;
-    border: 1px solid rgba(255,255,255,.12) !important;
-    box-shadow: 0 26px 90px rgba(0,0,0,.55) !important;
-    backdrop-filter: blur(10px) saturate(130%) !important;
-    -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
-  }
-  .titlebar{
-    height: 40px !important;
-    background: rgba(255,255,255,.06) !important;
-    border-bottom: 1px solid rgba(255,255,255,.10) !important;
-  }
-
-  /* przyciski jak win-controls */
-  .traffic{ gap:6px; }
-  .dot{
-    width: 28px !important;
-    height: 22px !important;
-    border-radius: 8px !important;
-    background: rgba(255,255,255,.06) !important;
-    border: 1px solid rgba(255,255,255,.10) !important;
-    position: relative;
-  }
-  .dot.red{ background: rgba(255,80,80,.16) !important; }
-  .dot.yellow{ background: rgba(255,200,70,.14) !important; }
-  .dot.green{ background: rgba(120,255,160,.12) !important; }
-  .dot::after{
-    content:"";
-    position:absolute; inset:0;
-    display:grid; place-items:center;
-    font-size:12px;
-    color: rgba(255,255,255,.85);
-    font-weight: 800;
-  }
-  .dot.red::after{ content:"✕"; }
-  .dot.yellow::after{ content:"_"; transform: translateY(-3px); }
-  .dot.green::after{ content:"□"; }
 </style>
 </head>
 
 <body>
-  <!-- Mobile / unknown device overlay -->
-  <div class="mobileBlock" id="mobileBlock" role="dialog" aria-modal="true" aria-label="Nieznane urządzenie">
+  <!-- Mobile block -->
+  <div class="mobileBlock" id="mobileBlock">
     <div class="mobileBlockCard">
-      <div class="mobileBlockTop">
-        <div class="mobileTraffic" aria-hidden="true">
-          <div class="mobileDot red"></div>
-          <div class="mobileDot yellow"></div>
-          <div class="mobileDot green"></div>
-        </div>
-        <div class="mobileTitle">godwifi</div>
-        <div style="width:52px;"></div>
+      <div class="mobileH1">Nieznane urządzenie</div>
+      <p class="mobileP">
+        Ta strona jest zrobiona pod desktop. Na telefonie wygląda słabo i część rzeczy nie działa jak trzeba.
+        Wejdź proszę na komputerze.
+      </p>
+      <div class="mobileActions">
+        <button class="mobileBtn primary" id="copyLinkBtn">Skopiuj link</button>
+        <button class="mobileBtn" id="continueAnywayBtn">Kontynuuj mimo to</button>
       </div>
-
-      <div class="mobileBlockBody">
-        <div class="mobileH1">Nieznane urządzenie</div>
-        <p class="mobileP">
-          Ta strona jest zrobiona pod desktop. Na telefonie wygląda słabo i część rzeczy nie działa jak trzeba.
-          Wejdź proszę na komputerze.
-        </p>
-
-        <div class="mobileActions">
-          <button class="mobileBtn primary" id="copyLinkBtn" type="button">Skopiuj link</button>
-          <button class="mobileBtn" id="continueAnywayBtn" type="button">Kontynuuj mimo to</button>
-        </div>
-
-        <div class="mobileMeta" id="mobileMeta"></div>
-      </div>
+      <div class="mobileMeta" id="mobileMeta"></div>
     </div>
   </div>
 
-  <div class="wallpaper" aria-hidden="true"></div>
-  <div class="brandBlur" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-
-  <!-- Top menu bar (ukryty przez CSS override, ale zostaje jako źródło #batteryPct itd.) -->
-  <div class="menubar" role="banner" aria-label="menu bar">
-    <div class="left">
-      <span class="apple" aria-hidden="true"></span>
-      <strong style="font-weight:600">Finder</strong>
-
-      <div class="menuItem" data-menu="file">Plik
-        <div class="dropdown" role="menu" aria-label="Plik">
-          <button type="button" id="reloadBtn">Odśwież <span class="kbd">⌘R</span></button>
-          <button type="button" id="closeMenusBtn">Zamknij menu <span class="kbd">Esc</span></button>
-        </div>
-      </div>
-
-      <div class="menuItem" data-menu="help">Pomoc
-        <div class="dropdown" role="menu" aria-label="Pomoc">
-          <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Instagram god.wifi</a>
-          <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Instagram Gumisia</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="right">
-      <span id="wifiBtn" class="wifiBtn" title="Kliknij: gra">Wi-Fi</span>
-
-      <div class="battery" id="battery" aria-label="Bateria">
-        <div class="batteryIcon" aria-hidden="true">
-          <div class="batteryLevel" id="batteryLevel"></div>
-          <div class="batteryCap"></div>
-          <div class="batteryBolt" id="batteryBolt">⚡</div>
-        </div>
-        <div class="batteryPct" id="batteryPct">--%</div>
-      </div>
-
-      <span id="clock" style="opacity:.92; font-variant-numeric: tabular-nums;"></span>
-    </div>
-  </div>
+  <div class="wallpaper"></div>
+  <div class="brandBlur"></div>
+  <div class="grain"></div>
 
   <!-- Desktop icons -->
-  <div class="icons" aria-label="Pulpit">
+  <div class="icons">
     <div class="icon" id="driveLauncher">
       <div class="pic"><img src="drive.png" alt="" class="deskIconImg"></div>
       <div>Dysk</div>
     </div>
 
-    <div class="icon" id="folderLauncher" aria-label="Otwórz Folder">
+    <div class="icon" id="folderLauncher">
       <div class="pic"><img src="files.png" alt="" class="deskIconImg"></div>
       <div>Folder</div>
     </div>
 
-    <div class="icon" id="appLauncher" aria-label="Otwórz godwifi">
+    <div class="icon" id="appLauncher">
       <div class="pic"><img src="freewifi.png" alt="" class="deskIconImg"></div>
       <div>godwifi</div>
     </div>
@@ -1267,34 +796,132 @@
 
   <!-- Stage -->
   <div class="stage" id="stage">
-    <!-- ===== NOTATNIK SETLISTA ===== -->
+    <!-- Main app window -->
+    <section class="app" id="app">
+      <div class="titlebar" data-drag="app">
+        <div class="title">godwifi</div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="appMin">−</button>
+          <button class="win-btn maximize" id="appMax">□</button>
+          <button class="win-btn close" id="appClose">×</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <button class="logoBtn" id="toggle">
+          <img class="logo" id="logo" src="freewifi.png" alt="godwifi logo">
+        </button>
+        <div class="hint" id="hint">Kliknij logo, aby rozwinąć</div>
+
+        <div class="menuWrap" id="menuWrap">
+          <nav class="menu">
+            <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Sprawdź Instagram Gumisia</a>
+            <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Sprawdź Instagram god.wifi</a>
+            <a id="spotifyLink" href="#" target="_blank" rel="noopener">Sprawdź Spotify</a>
+            <a id="discordLink" class="discord" href="#" target="_blank" rel="noopener">Wejdź na Discord</a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- Finder root -->
+    <section class="app finder" id="finderWin">
+      <div class="titlebar" data-drag="finderWin">
+        <div class="title">Folder</div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="finderMin">−</button>
+          <button class="win-btn maximize" id="finderMax">□</button>
+          <button class="win-btn close" id="finderClose">×</button>
+        </div>
+      </div>
+
+      <div class="finderPath">~/</div>
+      <div class="finderBody">
+        <div class="finderGrid">
+          <button class="finderItem" id="openKoncert">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>koncert</span>
+          </button>
+
+          <button class="finderItem" id="openMix">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>mix</span>
+          </button>
+
+          <button class="finderItem">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>projekty</span>
+          </button>
+
+          <button class="finderItem">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>grafika</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Koncert -->
+    <section class="app finder" id="koncertWin">
+      <div class="titlebar" data-drag="koncertWin">
+        <div class="title">koncert</div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="koncertMin">−</button>
+          <button class="win-btn maximize" id="koncertMax">□</button>
+          <button class="win-btn close" id="koncertClose">×</button>
+        </div>
+      </div>
+
+      <div class="finderPath">~/koncert</div>
+      <div class="finderBody">
+        <div class="finderGrid">
+          <button class="finderItem">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>zdjęcia</span>
+          </button>
+
+          <button class="finderItem">
+            <img src="files.png" alt="" class="finderIcon">
+            <span>wideo</span>
+          </button>
+
+          <button class="finderItem" id="openSetlista">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>setlista</span>
+            <div class="fileBadge">plik</div>
+          </button>
+
+          <button class="finderItem">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>info</span>
+            <div class="fileBadge">plik</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes -->
     <section class="app notes" id="notesWin">
       <div class="titlebar" data-drag="notesWin">
-        <div class="traffic">
-          <button class="dot red" id="notesClose"></button>
-          <button class="dot yellow" id="notesMin"></button>
-          <button class="dot green"></button>
-        </div>
         <div class="title">Notatki</div>
-        <div style="width:52px;"></div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="notesMin">−</button>
+          <button class="win-btn maximize" id="notesMax">□</button>
+          <button class="win-btn close" id="notesClose">×</button>
+        </div>
       </div>
 
       <div class="notesWrap">
         <aside class="notesSidebar">
           <div class="notesSideTitle">Notatki</div>
-
           <div class="notesItem">
-            <div class="t">setlista</div>
-            <div class="s">warszawa, 7/11…</div>
+            <div>setlista</div>
+            <div style="font-size:11px;opacity:.6;margin-top:4px;">warszawa, 7/11…</div>
           </div>
         </aside>
 
         <main class="notesEditor">
-          <div class="notesHeader">
-            <h2>setlista</h2>
-            <div class="notesPill">koncert</div>
-          </div>
-
+          <h2 style="margin:0 0 12px;font-size:16px;">setlista</h2>
           <div class="notePaper">
             <ol>
               <li>warszawa (2:32)</li>
@@ -1318,123 +945,15 @@
       </div>
     </section>
 
-    <!-- Main app window -->
-    <section class="app" id="app" aria-label="Okno aplikacji">
-      <div class="titlebar" data-drag="app">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="appClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="appMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="appMax" type="button" aria-label="Powiększ"></button>
-        </div>
-        <div class="title">godwifi</div>
-        <div style="width:52px;"></div>
-      </div>
-
-      <div class="content">
-        <button class="logoBtn" id="toggle" aria-expanded="false" aria-controls="menuWrap">
-          <img class="logo" id="logo" src="freewifi.png" alt="godwifi logo">
-        </button>
-        <div class="hint" id="hint">Kliknij logo, aby rozwinąć</div>
-
-        <div class="menuWrap" id="menuWrap">
-          <nav class="menu" aria-label="Linki">
-            <a href="https://instagram.com/tokarz_k" target="_blank" rel="noopener">Sprawdź Instagram Gumisia</a>
-            <a href="https://instagram.com/god.wifi" target="_blank" rel="noopener">Sprawdź Instagram god.wifi</a>
-            <a id="spotifyLink" href="#" target="_blank" rel="noopener">Sprawdź Spotify</a>
-            <a id="discordLink" class="discord" href="#" target="_blank" rel="noopener">Wejdź na Discord</a>
-          </nav>
-        </div>
-      </div>
-    </section>
-
-    <!-- Finder root -->
-    <section class="app finder" id="finderWin" aria-label="Okno folderu">
-      <div class="titlebar" data-drag="finderWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="finderClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="finderMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="finderMax" type="button" aria-label="Powiększ"></button>
-        </div>
-        <div class="title">Folder</div>
-        <div style="width:52px;"></div>
-      </div>
-
-      <div class="finderPath">~/</div>
-      <div class="finderBody">
-        <div class="finderGrid" aria-label="Zawartość folderu">
-          <button class="finderItem" type="button" id="openKoncert">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>koncert</span>
-          </button>
-
-          <button class="finderItem" type="button" id="openMix">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>mix</span>
-          </button>
-
-          <button class="finderItem" type="button">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>projekty</span>
-          </button>
-
-          <button class="finderItem" type="button">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>grafika</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Finder: koncert -->
-    <section class="app finder" id="koncertWin" aria-label="Okno koncert">
-      <div class="titlebar" data-drag="koncertWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="koncertClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="koncertMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="koncertMax" type="button" aria-label="Powiększ"></button>
-        </div>
-        <div class="title">koncert</div>
-        <div style="width:52px;"></div>
-      </div>
-
-      <div class="finderPath">~/koncert</div>
-      <div class="finderBody">
-        <div class="finderGrid" aria-label="Zawartość koncert">
-          <button class="finderItem" type="button">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>zdjęcia</span>
-          </button>
-
-          <button class="finderItem" type="button">
-            <img src="files.png" alt="" class="finderIcon">
-            <span>wideo</span>
-          </button>
-
-          <button class="finderItem" id="openSetlista" type="button">
-            <img src="drive.png" alt="" class="finderIcon">
-            <span>setlista</span>
-            <div class="fileBadge">plik</div>
-          </button>
-
-          <button class="finderItem" type="button">
-            <img src="drive.png" alt="" class="finderIcon">
-            <span>info</span>
-            <div class="fileBadge">plik</div>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- MIX window (player) -->
-    <section class="app finder" id="mixWin" aria-label="mix">
+    <!-- Mix player -->
+    <section class="app finder" id="mixWin">
       <div class="titlebar" data-drag="mixWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="mixClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="mixMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="mixMax" type="button" aria-label="Powiększ"></button>
-        </div>
         <div class="title">mix</div>
-        <div style="width:52px;"></div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="mixMin">−</button>
+          <button class="win-btn maximize" id="mixMax">□</button>
+          <button class="win-btn close" id="mixClose">×</button>
+        </div>
       </div>
 
       <div class="player">
@@ -1445,21 +964,21 @@
           </div>
 
           <div class="ctrl">
-            <button class="mbtn" id="mixShuffle" type="button" title="Shuffle (S)">S</button>
-            <button class="mbtn" id="mixPrev" type="button" title="Previous (←)">◀︎</button>
-            <button class="mbtn playBig" id="mixPlay" type="button" title="Play/Pause (Space)">▶︎</button>
-            <button class="mbtn" id="mixNext" type="button" title="Next (→)">▶︎</button>
-            <button class="mbtn" id="mixRepeat" type="button" title="Repeat (R)">R</button>
+            <button class="mbtn" id="mixShuffle" title="Shuffle (S)">S</button>
+            <button class="mbtn" id="mixPrev" title="Previous (←)">◀︎</button>
+            <button class="mbtn playBig" id="mixPlay" title="Play/Pause (Space)">▶︎</button>
+            <button class="mbtn" id="mixNext" title="Next (→)">▶︎</button>
+            <button class="mbtn" id="mixRepeat" title="Repeat (R)">R</button>
           </div>
 
-          <div class="vol" title="Volume">
+          <div class="vol">
             <span>🔊</span>
             <input id="mixVol" type="range" min="0" max="1" step="0.01" value="0.85" />
           </div>
         </div>
 
         <div class="progress">
-          <div class="pbar" id="mixPbar" aria-label="Progress">
+          <div class="pbar" id="mixPbar">
             <div class="pfill" id="mixPfill"></div>
           </div>
           <div class="timeRow">
@@ -1469,31 +988,26 @@
         </div>
 
         <div class="trackList" id="mixList"></div>
-
-        <div class="playerHint">
-          Play startuje dopiero po kliknięciu. Zamknięcie/minimalizacja zatrzymuje muzykę.
-        </div>
-
+        <div class="playerHint">Play startuje dopiero po kliknięciu. Zamknięcie/minimalizacja zatrzymuje muzykę.</div>
         <audio id="mixAudio" preload="metadata"></audio>
       </div>
     </section>
 
-    <!-- ===== DRIVE window ===== -->
-    <section class="app finder" id="driveWin" aria-label="Dysk">
+    <!-- Drive -->
+    <section class="app finder" id="driveWin">
       <div class="titlebar" data-drag="driveWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="driveClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="driveMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="driveMax" type="button" aria-label="Powiększ"></button>
-        </div>
         <div class="title">Dysk</div>
-        <div style="width:52px;"></div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="driveMin">−</button>
+          <button class="win-btn maximize" id="driveMax">□</button>
+          <button class="win-btn close" id="driveClose">×</button>
+        </div>
       </div>
 
       <div class="finderPath">~/Dysk</div>
       <div class="finderBody">
-        <div class="finderGrid" aria-label="Zawartość dysku">
-          <button class="finderItem" type="button" id="openIcloudPhotos">
+        <div class="finderGrid">
+          <button class="finderItem" id="openIcloudPhotos">
             <img src="Galeria iCloud ikona.png" alt="" class="finderIcon">
             <span>Galeria iCloud</span>
           </button>
@@ -1501,20 +1015,19 @@
       </div>
     </section>
 
-    <!-- ===== iCloud Photos window ===== -->
-    <section class="app finder" id="photosWin" aria-label="iCloud Photos">
+    <!-- Photos -->
+    <section class="app finder" id="photosWin">
       <div class="titlebar" data-drag="photosWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="photosClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="photosMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="photosMax" type="button" aria-label="Powiększ"></button>
-        </div>
         <div class="title">iCloud Photos</div>
-        <div style="width:52px;"></div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="photosMin">−</button>
+          <button class="win-btn maximize" id="photosMax">□</button>
+          <button class="win-btn close" id="photosClose">×</button>
+        </div>
       </div>
 
       <div class="icloudTop">
-        <div class="icloudLeft">
+        <div>
           <div class="icloudH1">Zdjęcia</div>
           <div class="icloudTabs">
             <button class="icloudTab active" data-tab="recent">Ostatnie</button>
@@ -1522,111 +1035,86 @@
             <button class="icloudTab" data-tab="shared">Udostępnione</button>
           </div>
         </div>
-
         <input class="icloudSearch" id="icloudSearch" placeholder="Szukaj">
       </div>
 
       <div class="icloudGrid" id="icloudGrid"></div>
     </section>
 
-    <!-- ===== iCloud viewer (full) ===== -->
-    <div class="icloudViewer" id="icloudViewer" aria-hidden="true">
-      <div class="icloudViewerTop">
-        <button class="icloudViewerBtn" id="icloudViewerClose" type="button">Gotowe</button>
-        <div class="icloudViewerTitle" id="icloudViewerTitle">Zdjęcie</div>
-        <div style="width:72px;"></div>
-      </div>
-
-      <div class="icloudViewerBody">
-        <img id="icloudViewerImg" alt="">
-      </div>
-    </div>
-
-    <!-- Game window -->
-    <section class="app game" id="gameWin" aria-label="Gra">
+    <!-- Game -->
+    <section class="app game" id="gameWin">
       <div class="titlebar" data-drag="gameWin">
-        <div class="traffic" aria-label="Sterowanie oknem">
-          <button class="dot red" id="gameClose" type="button" aria-label="Zamknij"></button>
-          <button class="dot yellow" id="gameMin" type="button" aria-label="Minimalizuj"></button>
-          <button class="dot green" id="gameMax" type="button" aria-label="Powiększ"></button>
-        </div>
         <div class="title">Wi-Fi Runner</div>
-        <div style="width:52px;"></div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="gameMin">−</button>
+          <button class="win-btn maximize" id="gameMax">□</button>
+          <button class="win-btn close" id="gameClose">×</button>
+        </div>
       </div>
 
       <div class="gameWrap">
         <div class="gameTop">
           <div>Score: <span id="score">0</span> · Best: <span id="best">0</span></div>
-          <div id="gameState" style="opacity:.8">Kliknij / Space aby start</div>
+          <div id="gameState">Kliknij / Space aby start</div>
         </div>
-
         <canvas id="dinoCanvas" width="900" height="260"></canvas>
-        <div class="gameHint">Sterowanie: <b>Space</b> / <b>↑</b> / klik / tap — skok. Po przegranej: Space aby restart.</div>
+        <div class="gameHint">Sterowanie: <b>Space</b> / <b>↑</b> / klik — skok. Po przegranej: Space aby restart.</div>
       </div>
     </section>
   </div>
 
-  <!-- TASKBAR (Windows/Ubuntu) + DOCK przeniesiony do środka -->
-  <div class="taskbar" id="taskbar" aria-label="Pasek zadań">
-    <div class="taskLeft">
-      <button class="startBtn" id="startBtn" type="button" title="Menu">
-        <span class="startMark" aria-hidden="true"></span>
-      </button>
+  <!-- iCloud viewer -->
+  <div class="icloudViewer" id="icloudViewer">
+    <div class="icloudViewerTop">
+      <button class="icloudViewerBtn" id="icloudViewerClose">Gotowe</button>
+      <div class="icloudViewerTitle" id="icloudViewerTitle">Zdjęcie</div>
+      <div style="width:72px;"></div>
     </div>
+    <div class="icloudViewerBody">
+      <img id="icloudViewerImg" alt="">
+    </div>
+  </div>
 
-    <div class="taskCenter">
-      <!-- Dock -->
-      <div class="dock" id="dock" aria-label="Dock">
-        <!-- Instagram (popup) -->
-        <div class="appicon" id="dockIg" title="Instagram">
-          <img src="Instagram_icon.png" class="dockimg" alt="">
-          <div class="runDot"></div>
+  <!-- Windows-style Taskbar -->
+  <div class="taskbar">
+    <div class="taskbar-left">
+      <div class="start-btn" id="startBtn" title="Start">⊞</div>
+      
+      <div class="taskbar-app" id="taskApp" style="display:none;">
+        <img src="freewifi.png" class="taskbar-icon" alt="">
+        <span>godwifi</span>
+      </div>
 
-          <div class="dockPopup" id="igPopup" role="menu" aria-label="Instagram menu">
-            <div class="dockPopupHeader">Instagram</div>
-            <div class="dockSep"></div>
+      <div class="taskbar-app" id="taskFinder" style="display:none;">
+        <img src="files.png" class="taskbar-icon" alt="">
+        <span>Folder</span>
+      </div>
 
-            <button class="dockItem" type="button" data-ig="gumis">
-              <span class="dockItemLeft">
-                <img src="Instagram_icon.png" class="dockTiny" alt="">
-                <span>Gumis</span>
-              </span>
-              <span class="dockItemHint">tokarz_k</span>
-            </button>
-
-            <button class="dockItem" type="button" data-ig="godwifi">
-              <span class="dockItemLeft">
-                <img src="Instagram_icon.png" class="dockTiny" alt="">
-                <span>god wifi</span>
-              </span>
-              <span class="dockItemHint">god.wifi</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Spotify -->
-        <div class="appicon" id="dockSpotify" title="Spotify">
-          <img src="Spotify_App_Logo.svg.png" class="dockimg" alt="">
-          <div class="runDot"></div>
-        </div>
-
-        <!-- Discord -->
-        <div class="appicon" id="dockDiscord" title="Discord">
-          <img src="discord-logo-icon-editorial-free-vector.png" class="dockimg" alt="">
-          <div class="runDot"></div>
-        </div>
+      <div class="taskbar-app" id="taskGame" style="display:none;">
+        <span>🎮</span>
+        <span>Wi-Fi Runner</span>
       </div>
     </div>
 
-    <div class="taskRight">
-      <span id="tbWifi" title="Kliknij: gra">Wi-Fi</span>
-      <span id="tbBat">--%</span>
-      <span id="tbClock">--:--</span>
+    <div class="taskbar-right">
+      <div class="system-tray">
+        <div class="tray-icon" id="wifiBtn" title="Wi-Fi Runner">📶</div>
+        
+        <div class="battery" id="battery">
+          <div class="batteryIcon">
+            <div class="batteryLevel" id="batteryLevel"></div>
+            <div class="batteryCap"></div>
+          </div>
+          <div style="font-variant-numeric: tabular-nums;" id="batteryPct">--%</div>
+        </div>
+
+        <div id="clock" style="font-variant-numeric: tabular-nums;"></div>
+      </div>
     </div>
   </div>
 
   <script>
-  // ====== MAINTENANCE MODE  (test/tryb) ======
+  // ====== MAINTENANCE MODE ======
   const MAINTENANCE = true;
   const PASSWORD = "g0dwifi";
 
@@ -1642,42 +1130,41 @@
     document.body.innerHTML = `
       <div style="
         min-height:100vh; display:grid; place-items:center;
-        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;
+        font-family: 'Segoe UI', Ubuntu, Arial, sans-serif;
         color: rgba(255,255,255,.92);
-        background: radial-gradient(900px 520px at 18% 18%, rgba(120,122,255,.28), transparent 60%),
-                    radial-gradient(780px 420px at 86% 28%, rgba(255,120,200,.22), transparent 62%),
-                    linear-gradient(180deg,#0f1220,#050509);
+        background: radial-gradient(800px 500px at 20% 20%, rgba(80,120,255,.2), transparent 60%),
+                    linear-gradient(180deg,#0a0c14,#050507);
       ">
         <div style="
           width:min(420px,92vw);
-          padding:22px 18px;
-          border-radius:18px;
-          background: rgba(255,255,255,.12);
-          border:1px solid rgba(255,255,255,.18);
+          padding:24px 20px;
+          border-radius:8px;
+          background: rgba(40,40,45,.95);
+          border:1px solid rgba(255,255,255,.15);
           backdrop-filter: blur(18px);
-          box-shadow: 0 30px 90px rgba(0,0,0,.45);
+          box-shadow: 0 30px 90px rgba(0,0,0,.6);
           text-align:center;
         ">
-          <div style="font-size:14px; opacity:.85; margin-bottom:10px;">godwifi</div>
+          <div style="font-size:14px; opacity:.85; margin-bottom:8px;">godwifi</div>
           <div style="font-size:18px; font-weight:700; margin-bottom:10px;">Tryb testów</div>
-          <div style="font-size:13px; opacity:.75; margin-bottom:14px;">
+          <div style="font-size:13px; opacity:.75; margin-bottom:16px;">
             Strona chwilowo niedostępna. Jeśli masz dostęp, wpisz hasło.
           </div>
 
           <input id="pw" type="password" placeholder="Hasło"
             style="
-              width:100%; padding:12px 12px; border-radius:12px;
-              border:1px solid rgba(255,255,255,.18);
-              background: rgba(255,255,255,.10);
+              width:100%; padding:12px; border-radius:6px;
+              border:1px solid rgba(255,255,255,.15);
+              background: rgba(255,255,255,.08);
               color: rgba(255,255,255,.92);
               outline:none;
             " />
 
           <button id="go"
             style="
-              width:100%; margin-top:10px; padding:12px 12px;
-              border-radius:12px; border:1px solid rgba(255,255,255,.18);
-              background: rgba(255,255,255,.18);
+              width:100%; margin-top:10px; padding:12px;
+              border-radius:6px; border:1px solid rgba(255,255,255,.15);
+              background: rgba(255,255,255,.14);
               color: rgba(255,255,255,.92);
               font-weight:700;
               cursor:pointer;
@@ -1711,10 +1198,10 @@
   if (MAINTENANCE && !isUnlocked()) {
     document.addEventListener("DOMContentLoaded", showLockScreen);
   }
-  </script>
+</script>
 
-  <script>
-  // ===== Mobile blocker (unknown device) =====
+<script>
+  // ===== Mobile blocker =====
   (function(){
     const block = document.getElementById("mobileBlock");
     if (!block) return;
@@ -1726,7 +1213,6 @@
     const ua = navigator.userAgent || "";
     const isTouch = navigator.maxTouchPoints > 0;
     const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 820;
-
     const isMobileLike = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || (isTouch && smallScreen);
 
     function show(){
@@ -1741,8 +1227,7 @@
 
     if (isMobileLike){
       const device = /iPhone|iPad|iPod/i.test(ua) ? "iOS" :
-                     /Android/i.test(ua) ? "Android" :
-                     "Mobile";
+                     /Android/i.test(ua) ? "Android" : "Mobile";
       meta.textContent = `Wykryto: ${device} · ${window.innerWidth}×${window.innerHeight}`;
       show();
     }
@@ -1758,13 +1243,6 @@
         prompt("Skopiuj link:", location.href);
       }
     });
-
-    window.addEventListener("resize", () => {
-      if (!block) return;
-      const small = Math.min(window.innerWidth, window.innerHeight) <= 820;
-      const mobileNow = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent || "") || (navigator.maxTouchPoints > 0 && small);
-      if (mobileNow) show();
-    });
   })();
 
   // ===== LINKS =====
@@ -1778,7 +1256,7 @@
 
   const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ===== Clock (źródło) =====
+  // ===== Clock =====
   const clock = document.getElementById("clock");
   function tick(){
     const d = new Date();
@@ -1787,12 +1265,11 @@
     clock.textContent = `${hh}:${mm}`;
   }
   tick();
-  setInterval(tick, 1000 * 10);
+  setInterval(tick, 10000);
 
-  // ===== Battery by hour (źródło) =====
+  // ===== Battery =====
   const batteryLevelEl = document.getElementById("batteryLevel");
   const batteryPctEl = document.getElementById("batteryPct");
-  const batteryBoltEl = document.getElementById("batteryBolt");
 
   function batteryModelByHour(h){
     let pct = 100;
@@ -1823,137 +1300,17 @@
 
     batteryLevelEl.style.width = pct + "%";
     batteryPctEl.textContent = pct + "%";
-    batteryBoltEl.style.opacity = charging ? "1" : "0";
 
     if (pct < 15) batteryLevelEl.style.background = "rgba(255,95,87,.95)";
     else if (pct < 35) batteryLevelEl.style.background = "rgba(255,189,46,.95)";
     else batteryLevelEl.style.background = "rgba(140,255,170,.95)";
   }
   renderBattery();
-  setInterval(renderBattery, 1000 * 30);
-
-  // ===== Menu dropdowns (nie przeszkadza – menubar i tak ukryty) =====
-  const menuItems = Array.from(document.querySelectorAll(".menuItem"));
-  function closeAllMenus(){ menuItems.forEach(i => i.classList.remove("active")); }
-
-  menuItems.forEach(item => {
-    item.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isActive = item.classList.contains("active");
-      closeAllMenus();
-      item.classList.toggle("active", !isActive);
-    });
-  });
-
-  document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
-  document.getElementById("closeMenusBtn").addEventListener("click", () => closeAllMenus());
-
-  // ===== App internal menu =====
-  const toggle = document.getElementById("toggle");
-  const menuWrap = document.getElementById("menuWrap");
-  const hint = document.getElementById("hint");
-
-  function setOpen(open){
-    menuWrap.classList.toggle("open", open);
-    toggle.setAttribute("aria-expanded", String(open));
-    hint.textContent = open ? "Wybierz link" : "Kliknij logo, aby rozwinąć";
-  }
-  toggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    setOpen(!menuWrap.classList.contains("open"));
-  });
-
-  // ===== Dock + IG popup =====
-  const dockIg = document.getElementById("dockIg");
-  const igPopup = document.getElementById("igPopup");
-  const dockSpotify = document.getElementById("dockSpotify");
-  const dockDiscord = document.getElementById("dockDiscord");
-
-  function closeIgPopup(){ dockIg.classList.remove("showPopup"); }
-
-  dockSpotify.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeAllMenus(); closeIgPopup(); setOpen(false);
-    window.open(SPOTIFY_URL, "_blank", "noopener");
-  });
-
-  dockDiscord.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeAllMenus(); closeIgPopup(); setOpen(false);
-    window.open(DISCORD_URL, "_blank", "noopener");
-  });
-
-  dockIg.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeAllMenus();
-    const open = !dockIg.classList.contains("showPopup");
-    closeIgPopup();
-    dockIg.classList.toggle("showPopup", open);
-  });
-
-  igPopup.querySelectorAll(".dockItem").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const which = btn.getAttribute("data-ig");
-      const url = (which === "gumis") ? IG_GUMIS : IG_GODWIFI;
-      closeIgPopup();
-      window.open(url, "_blank", "noopener");
-    });
-  });
-
-  // ===== Dock magnification =====
-  const dock = document.getElementById("dock");
-  const dockIcons = Array.from(dock.querySelectorAll(".appicon"));
-
-  function setDockScales(clientX){
-    const rect = dock.getBoundingClientRect();
-    const x = clientX - rect.left;
-
-    dockIcons.forEach(icon => {
-      icon.style.setProperty("--ml", "0px");
-      icon.style.setProperty("--mr", "0px");
-    });
-
-    let maxT = 0;
-
-    dockIcons.forEach(icon => {
-      const ir = icon.getBoundingClientRect();
-      const center = (ir.left + ir.width/2) - rect.left;
-      const dist = Math.abs(center - x);
-
-      const maxDist = 160;
-      const t = Math.max(0, 1 - (dist / maxDist));
-      maxT = Math.max(maxT, t);
-
-      const scale = 1 + (t*t) * 0.75;
-      const lift  = - (t*t) * 12;
-
-      icon.style.setProperty("--scale", scale.toFixed(3));
-      icon.style.setProperty("--lift", lift.toFixed(2) + "px");
-
-      const push = (t*t) * 14;
-      icon.style.setProperty("--ml", push.toFixed(2) + "px");
-      icon.style.setProperty("--mr", push.toFixed(2) + "px");
-    });
-
-    const extraGap = 10 + maxT * 10;
-    dock.style.setProperty("--dockGap", extraGap.toFixed(2) + "px");
-  }
-
-  dock.addEventListener("mousemove", (e) => setDockScales(e.clientX));
-  dock.addEventListener("mouseleave", () => {
-    dock.style.setProperty("--dockGap", "10px");
-    dockIcons.forEach(icon => {
-      icon.style.setProperty("--scale", "1");
-      icon.style.setProperty("--lift", "0px");
-      icon.style.setProperty("--ml", "0px");
-      icon.style.setProperty("--mr", "0px");
-    });
-  });
+  setInterval(renderBattery, 30000);
 
   // ===== Window system =====
   const stage = document.getElementById("stage");
-  const MENUBAR_SAFE = 10; // <- było 32+10; teraz menubar ukryty
+  const TASKBAR_SAFE = 48 + 10;
 
   let zCounter = 300;
   function bringToFront(win){
@@ -1964,83 +1321,19 @@
   function resetToCenter(win){
     win.style.setProperty("--x", "0px");
     win.style.setProperty("--y", "0px");
-
-    requestAnimationFrame(() => {
-      const r = win.getBoundingClientRect();
-      if (r.top < MENUBAR_SAFE){
-        const dy = (MENUBAR_SAFE - r.top);
-        const curY = parseFloat(getComputedStyle(win).getPropertyValue("--y")) || 0;
-        win.style.setProperty("--y", (curY + dy) + "px");
-      }
-    });
   }
 
   function openWindow(win, fromEl){
     bringToFront(win);
     win.classList.add("open");
     resetToCenter(win);
-
-    if (prefersReduced) return;
-
-    const fromRect = fromEl.getBoundingClientRect();
-    const toRect = win.getBoundingClientRect();
-    const dx = (fromRect.left + fromRect.width/2) - (toRect.left + toRect.width/2);
-    const dy = (fromRect.top + fromRect.height/2) - (toRect.top + toRect.height/2);
-    const s = Math.min(
-      Math.max(0.18, fromRect.width / toRect.width),
-      Math.max(0.18, fromRect.height / toRect.height)
-    );
-
-    win.animate([
-      { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s})`, opacity: 0.0 },
-      { transform: `translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)`, opacity: 1.0 }
-    ], {
-      duration: 320,
-      easing: "cubic-bezier(.2,.9,.2,1)",
-      fill: "both"
-    }).onfinish = () => {
-      win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
-      requestAnimationFrame(() => {
-        win.style.transform = "translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)";
-      });
-    };
   }
 
   function minimizeWindow(win, toEl, afterFn){
     if (!win.classList.contains("open")) return;
-
-    if (prefersReduced){
-      win.classList.remove("open");
-      resetToCenter(win);
-      if (afterFn) afterFn();
-      return;
-    }
-
-    const fromRect = win.getBoundingClientRect();
-    const toRect = toEl.getBoundingClientRect();
-
-    const dx = (toRect.left + toRect.width/2) - (fromRect.left + fromRect.width/2);
-    const dy = (toRect.top + toRect.height/2) - (fromRect.top + fromRect.height/2);
-
-    const s = Math.min(
-      Math.max(0.18, toRect.width / fromRect.width),
-      Math.max(0.18, toRect.height / fromRect.height)
-    );
-
-    const anim = win.animate([
-      { transform: `translate(-50%,-50%) translate(var(--x,0px), var(--y,0px)) scale(.985)`, opacity: 1.0 },
-      { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(${s})`, opacity: 0.0 }
-    ], {
-      duration: 280,
-      easing: "cubic-bezier(.2,.9,.2,1)",
-      fill: "both"
-    });
-
-    anim.onfinish = () => {
-      win.classList.remove("open");
-      resetToCenter(win);
-      if (afterFn) afterFn();
-    };
+    win.classList.remove("open");
+    resetToCenter(win);
+    if (afterFn) afterFn();
   }
 
   function toggleWindow(win, fromEl, onClose){
@@ -2067,7 +1360,7 @@
 
     titlebarEl.addEventListener("pointerdown", (e)=>{
       if (!win.classList.contains("open")) return;
-      if (e.target && e.target.classList && e.target.classList.contains("dot")) return;
+      if (e.target && e.target.classList && e.target.classList.contains("win-btn")) return;
 
       dragging = true;
       bringToFront(win);
@@ -2093,12 +1386,6 @@
       let nx = clamp(baseX + dx, -maxX, maxX);
       let ny = clamp(baseY + dy, -maxY, maxY);
 
-      const r = win.getBoundingClientRect();
-      const projectedTop = r.top + dy;
-      if (projectedTop < MENUBAR_SAFE){
-        ny += (MENUBAR_SAFE - projectedTop);
-      }
-
       win.style.setProperty("--x", nx + "px");
       win.style.setProperty("--y", ny + "px");
     });
@@ -2114,7 +1401,576 @@
   }
   document.querySelectorAll(".titlebar[data-drag]").forEach(makeDraggable);
 
-  // ===== Launchers + controls =====
+  // ===== Wire window controls =====
+  function wireWindowControls(prefix, win, launcherEl, onClose){
+    const closeBtn = document.getElementById(prefix+"Close");
+    const minBtn = document.getElementById(prefix+"Min");
+    const maxBtn = document.getElementById(prefix+"Max");
+
+    let maxed = false;
+
+    if (closeBtn) closeBtn.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(win, launcherEl, onClose); });
+    if (minBtn) minBtn.addEventListener("click", (e)=>{ e.stopPropagation(); minimizeWindow(win, launcherEl, onClose); });
+    if (maxBtn) maxBtn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      if (!win.classList.contains("open")) return;
+      maxed = !maxed;
+      if (win.classList.contains("game")){
+        win.style.width = maxed ? "min(940px, 96vw)" : "min(780px, 96vw)";
+      } else if (win.classList.contains("finder")){
+        win.style.width = maxed ? "min(940px, 94vw)" : "min(720px, 92vw)";
+      } else if (win.classList.contains("notes")){
+        win.style.width = maxed ? "min(980px, 96vw)" : "min(820px, 94vw)";
+      } else {
+        win.style.width = maxed ? "min(800px, 94vw)" : "min(600px, 90vw)";
+      }
+      resetToCenter(win);
+    });
+  }
+
+  // ===== Windows =====
   const app = document.getElementById("app");
   const finderWin = document.getElementById("finderWin");
-  const koncertWin
+  const koncertWin = document.getElementById("koncertWin");
+  const mixWin = document.getElementById("mixWin");
+  const gameWin = document.getElementById("gameWin");
+  const notesWin = document.getElementById("notesWin");
+  const driveWin = document.getElementById("driveWin");
+  const photosWin = document.getElementById("photosWin");
+
+  const appLauncher = document.getElementById("appLauncher");
+  const folderLauncher = document.getElementById("folderLauncher");
+  const driveLauncher = document.getElementById("driveLauncher");
+  const wifiBtn = document.getElementById("wifiBtn");
+  const startBtn = document.getElementById("startBtn");
+
+  const taskApp = document.getElementById("taskApp");
+  const taskFinder = document.getElementById("taskFinder");
+  const taskGame = document.getElementById("taskGame");
+
+  wireWindowControls("app", app, appLauncher, ()=>{ setOpen(false); taskApp.style.display = "none"; });
+  wireWindowControls("finder", finderWin, folderLauncher, ()=>{ taskFinder.style.display = "none"; });
+  wireWindowControls("koncert", koncertWin, folderLauncher);
+  wireWindowControls("mix", mixWin, folderLauncher, ()=> stopMix(true));
+  wireWindowControls("game", gameWin, wifiBtn, ()=>{ taskGame.style.display = "none"; });
+  wireWindowControls("notes", notesWin, folderLauncher);
+  wireWindowControls("drive", driveWin, driveLauncher);
+  wireWindowControls("photos", photosWin, driveLauncher);
+
+  // ===== Launchers =====
+  const toggle = document.getElementById("toggle");
+  const menuWrap = document.getElementById("menuWrap");
+  const hint = document.getElementById("hint");
+
+  function setOpen(open){
+    menuWrap.classList.toggle("open", open);
+    hint.textContent = open ? "Wybierz link" : "Kliknij logo, aby rozwinąć";
+  }
+
+  toggle.addEventListener("click", ()=> setOpen(!menuWrap.classList.contains("open")));
+
+  startBtn.addEventListener("click", ()=>{
+    toggleWindow(app, startBtn, ()=>{ setOpen(false); taskApp.style.display = "none"; });
+    if (app.classList.contains("open")){
+      taskApp.style.display = "flex";
+      taskApp.classList.add("active");
+    }
+  });
+
+  appLauncher.addEventListener("click", ()=>{
+    toggleWindow(app, appLauncher, ()=>{ setOpen(false); taskApp.style.display = "none"; });
+    if (app.classList.contains("open")){
+      taskApp.style.display = "flex";
+      taskApp.classList.add("active");
+    }
+  });
+
+  folderLauncher.addEventListener("click", ()=>{
+    toggleWindow(finderWin, folderLauncher, ()=>{ taskFinder.style.display = "none"; });
+    if (finderWin.classList.contains("open")){
+      taskFinder.style.display = "flex";
+      taskFinder.classList.add("active");
+    }
+  });
+
+  driveLauncher.addEventListener("click", ()=>{
+    toggleWindow(driveWin, driveLauncher);
+  });
+
+  wifiBtn.addEventListener("click", ()=>{
+    toggleWindow(gameWin, wifiBtn, ()=>{ taskGame.style.display = "none"; });
+    if (gameWin.classList.contains("open")){
+      taskGame.style.display = "flex";
+      taskGame.classList.add("active");
+      startOrResumeGame();
+    }
+  });
+
+  taskApp.addEventListener("click", ()=> toggleWindow(app, appLauncher, ()=>{ setOpen(false); taskApp.style.display = "none"; }));
+  taskFinder.addEventListener("click", ()=> toggleWindow(finderWin, folderLauncher, ()=>{ taskFinder.style.display = "none"; }));
+  taskGame.addEventListener("click", ()=> toggleWindow(gameWin, wifiBtn, ()=>{ taskGame.style.display = "none"; }));
+
+  const openKoncert = document.getElementById("openKoncert");
+  const openMix = document.getElementById("openMix");
+  const openSetlista = document.getElementById("openSetlista");
+  const openIcloudPhotos = document.getElementById("openIcloudPhotos");
+
+  openKoncert.addEventListener("click", ()=>{
+    if (!finderWin.classList.contains("open")) openWindow(finderWin, folderLauncher);
+    toggleWindow(koncertWin, folderLauncher);
+  });
+
+  openMix.addEventListener("click", ()=>{
+    if (!finderWin.classList.contains("open")) openWindow(finderWin, folderLauncher);
+    toggleWindow(mixWin, folderLauncher, ()=> stopMix(true));
+  });
+
+  openSetlista.addEventListener("click", ()=> toggleWindow(notesWin, openSetlista));
+
+  openIcloudPhotos.addEventListener("click", ()=>{
+    if (!driveWin.classList.contains("open")) openWindow(driveWin, driveLauncher);
+    openWindow(photosWin, openIcloudPhotos);
+    buildIcloudGrid();
+  });
+
+  // ===== MIX PLAYER =====
+  const MIX_PREVIEW_SECONDS = 20;
+  const MIX_TRACKS = [
+    { title: "Utwór 1", src: "mix1.mp3" },
+    { title: "Utwór 2", src: "mix2.mp3" },
+    { title: "Utwór 3", src: "mix3.mp3" },
+    { title: "Utwór 4", src: "mix4.mp3" },
+    { title: "Utwór 5", src: "mix5.mp3" },
+    { title: "Utwór 6", src: "mix6.mp3" },
+    { title: "Utwór 7", src: "mix7.mp3" },
+    { title: "Utwór 8", src: "mix8.mp3" },
+    { title: "Utwór 9", src: "mix9.mp3" },
+  ];
+
+  const mixAudio = document.getElementById("mixAudio");
+  const mixNowTitle = document.getElementById("mixNowTitle");
+  const mixList = document.getElementById("mixList");
+  const mixPlay = document.getElementById("mixPlay");
+  const mixPrev = document.getElementById("mixPrev");
+  const mixNext = document.getElementById("mixNext");
+  const mixShuffleBtn = document.getElementById("mixShuffle");
+  const mixRepeatBtn = document.getElementById("mixRepeat");
+  const mixVol = document.getElementById("mixVol");
+  const mixPbar = document.getElementById("mixPbar");
+  const mixPfill = document.getElementById("mixPfill");
+  const mixTcur = document.getElementById("mixTcur");
+  const mixTend = document.getElementById("mixTend");
+
+  let mixIndex = 0;
+  let mixShuffle = false;
+  let mixRepeat = false;
+  let mixOrder = [...Array(MIX_TRACKS.length).keys()];
+
+  function reshuffle(){
+    mixOrder = [...Array(MIX_TRACKS.length).keys()];
+    for (let i = mixOrder.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [mixOrder[i], mixOrder[j]] = [mixOrder[j], mixOrder[i]];
+    }
+    if (!mixOrder.includes(mixIndex)) mixOrder[0] = mixIndex;
+  }
+
+  function fmt(sec){
+    const s = Math.max(0, Math.min(MIX_PREVIEW_SECONDS, sec));
+    const m = Math.floor(s/60);
+    const ss = String(Math.floor(s%60)).padStart(2,"0");
+    return `${m}:${ss}`;
+  }
+
+  function setMixButtons(){
+    mixShuffleBtn.classList.toggle("on", mixShuffle);
+    mixRepeatBtn.classList.toggle("on", mixRepeat);
+    mixPlay.textContent = mixAudio.paused ? "▶︎" : "❚❚";
+  }
+
+  function renderMixList(){
+    mixList.innerHTML = "";
+    MIX_TRACKS.forEach((t,i)=>{
+      const row = document.createElement("div");
+      row.className = "track" + (i===mixIndex ? " active":"");
+      row.innerHTML = `
+        <div class="left">
+          <div class="name">${t.title}</div>
+          <div class="sub">20s preview</div>
+        </div>
+        <div class="right">${(i===mixIndex && !mixAudio.paused) ? "PLAYING" : ""}</div>
+      `;
+      row.addEventListener("click", ()=> loadMix(i, true));
+      mixList.appendChild(row);
+    });
+  }
+
+  function updateMixProgressUI(){
+    const t = Math.min(mixAudio.currentTime || 0, MIX_PREVIEW_SECONDS);
+    const pct = (t / MIX_PREVIEW_SECONDS) * 100;
+    mixPfill.style.width = pct + "%";
+    mixTcur.textContent = fmt(t);
+    mixTend.textContent = fmt(MIX_PREVIEW_SECONDS);
+  }
+
+  function loadMix(i, autoplay=false){
+    mixIndex = (i + MIX_TRACKS.length) % MIX_TRACKS.length;
+    const t = MIX_TRACKS[mixIndex];
+    mixNowTitle.textContent = t.title;
+    mixAudio.src = t.src;
+    mixAudio.currentTime = 0;
+    renderMixList();
+    setMixButtons();
+    updateMixProgressUI();
+    if (autoplay) playMix();
+  }
+
+  function playMix(){
+    mixAudio.currentTime = Math.min(mixAudio.currentTime, MIX_PREVIEW_SECONDS);
+    mixAudio.play();
+    setMixButtons();
+    renderMixList();
+  }
+
+  function pauseMix(){
+    mixAudio.pause();
+    setMixButtons();
+    renderMixList();
+  }
+
+  function stopMix(reset=false){
+    mixAudio.pause();
+    if (reset){
+      mixAudio.currentTime = 0;
+      updateMixProgressUI();
+    }
+    setMixButtons();
+    renderMixList();
+  }
+
+  function nextIndex(){
+    if (!mixShuffle) return (mixIndex + 1) % MIX_TRACKS.length;
+    const pos = mixOrder.indexOf(mixIndex);
+    return mixOrder[(pos + 1) % mixOrder.length];
+  }
+
+  function prevIndex(){
+    if (!mixShuffle) return (mixIndex - 1 + MIX_TRACKS.length) % MIX_TRACKS.length;
+    const pos = mixOrder.indexOf(mixIndex);
+    return mixOrder[(pos - 1 + mixOrder.length) % mixOrder.length];
+  }
+
+  mixPlay.addEventListener("click", ()=>{
+    if (mixAudio.paused) playMix();
+    else pauseMix();
+  });
+  mixNext.addEventListener("click", ()=> loadMix(nextIndex(), true));
+  mixPrev.addEventListener("click", ()=> loadMix(prevIndex(), true));
+
+  mixShuffleBtn.addEventListener("click", ()=>{
+    mixShuffle = !mixShuffle;
+    if (mixShuffle) reshuffle();
+    setMixButtons();
+  });
+
+  mixRepeatBtn.addEventListener("click", ()=>{
+    mixRepeat = !mixRepeat;
+    setMixButtons();
+  });
+
+  mixVol.addEventListener("input", ()=>{
+    mixAudio.volume = Number(mixVol.value);
+  });
+
+  mixPbar.addEventListener("click", (e)=>{
+    const r = mixPbar.getBoundingClientRect();
+    const x = Math.max(0, Math.min(r.width, e.clientX - r.left));
+    const pct = x / r.width;
+    mixAudio.currentTime = pct * MIX_PREVIEW_SECONDS;
+    updateMixProgressUI();
+  });
+
+  mixAudio.addEventListener("timeupdate", ()=>{
+    updateMixProgressUI();
+    if (mixAudio.currentTime >= MIX_PREVIEW_SECONDS){
+      if (mixRepeat) loadMix(mixIndex, true);
+      else loadMix(nextIndex(), true);
+    }
+  });
+
+  mixAudio.addEventListener("play", ()=>{ setMixButtons(); renderMixList(); });
+  mixAudio.addEventListener("pause", ()=>{ setMixButtons(); renderMixList(); });
+
+  function isMixOpen(){ return mixWin.classList.contains("open"); }
+
+  window.addEventListener("keydown", (e)=>{
+    if (!isMixOpen()) return;
+    const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.code === "Space"){
+      e.preventDefault();
+      if (mixAudio.paused) playMix(); else pauseMix();
+      return;
+    }
+    if (e.key === "ArrowRight"){
+      e.preventDefault();
+      loadMix(nextIndex(), true);
+      return;
+    }
+    if (e.key === "ArrowLeft"){
+      e.preventDefault();
+      loadMix(prevIndex(), true);
+      return;
+    }
+    if (k === "s"){
+      mixShuffle = !mixShuffle;
+      if (mixShuffle) reshuffle();
+      setMixButtons();
+      return;
+    }
+    if (k === "r"){
+      mixRepeat = !mixRepeat;
+      setMixButtons();
+      return;
+    }
+  });
+
+  mixAudio.volume = Number(mixVol.value);
+  loadMix(0, false);
+
+  // ===== Game =====
+  const canvas = document.getElementById("dinoCanvas");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("score");
+  const bestEl = document.getElementById("best");
+  const stateEl = document.getElementById("gameState");
+
+  let best = 0;
+  let running = false;
+  let dead = false;
+
+  const G = 0.9;
+  const groundY = 210;
+
+  const player = { x: 90, y: groundY, w: 26, h: 34, vy: 0, onGround: true };
+  let obstacles = [];
+  let speed = 4.2;
+  let score = 0;
+  let spawnTimer = 0;
+
+  function resetGame(){
+    running = false;
+    dead = false;
+    speed = 4.3;
+    score = 0;
+    spawnTimer = 0;
+    obstacles = [];
+    player.y = groundY;
+    player.vy = 0;
+    player.onGround = true;
+    scoreEl.textContent = "0";
+    stateEl.textContent = "Kliknij / Space aby start";
+  }
+
+  function spawnObstacle(){
+    const h = 18 + Math.random()*22;
+    const w = 14 + Math.random()*20;
+    obstacles.push({ x: canvas.width + 30, y: groundY + (34 - h), w, h });
+  }
+
+  function jump(){
+    if (dead) { startOrResumeGame(true); return; }
+    if (!running){ startOrResumeGame(true); return; }
+    if (player.onGround){
+      player.vy = -14.5;
+      player.onGround = false;
+    }
+  }
+
+  function collide(a,b){
+    return (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY+34);
+    ctx.lineTo(canvas.width, groundY+34);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(255,255,255,.3)";
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = "rgba(255,255,255,.92)";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+
+    ctx.globalAlpha = 0.1;
+    for (let i=0;i<4;i++){
+      const cx = (i*260 + (score*2)%260);
+      ctx.beginPath();
+      ctx.ellipse(cx, 70 + i*8, 42, 18, 0, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,1)";
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function step(){
+    if (!running){
+      draw();
+      requestAnimationFrame(step);
+      return;
+    }
+
+    player.vy += G;
+    player.y += player.vy;
+
+    if (player.y >= groundY){
+      player.y = groundY;
+      player.vy = 0;
+      player.onGround = true;
+    }
+
+    spawnTimer -= 1;
+    if (spawnTimer <= 0){
+      spawnObstacle();
+      spawnTimer = 55 + Math.random()*45;
+    }
+
+    obstacles.forEach(o => o.x -= speed);
+    obstacles = obstacles.filter(o => o.x + o.w > -20);
+
+    for (const o of obstacles){
+      if (collide(player, o)){
+        dead = true;
+        running = false;
+        stateEl.textContent = "Game over — Space/klik aby zrestartować";
+        best = Math.max(best, Math.floor(score));
+        bestEl.textContent = String(best);
+        break;
+      }
+    }
+
+    score += 0.18;
+    scoreEl.textContent = String(Math.floor(score));
+    speed += 0.0022;
+
+    draw();
+    requestAnimationFrame(step);
+  }
+
+  function startOrResumeGame(forceRestart=false){
+    if (forceRestart || dead){
+      resetGame();
+      dead = false;
+    }
+    if (!running){
+      running = true;
+      stateEl.textContent = "Grasz…";
+    }
+  }
+
+  window.addEventListener("keydown", (e)=>{
+    if (!gameWin.classList.contains("open")) return;
+    if (e.code === "Space" || e.code === "ArrowUp"){
+      e.preventDefault();
+      jump();
+    }
+  });
+
+  canvas.addEventListener("pointerdown", (e)=>{ 
+    if (!gameWin.classList.contains("open")) return; 
+    e.preventDefault(); 
+    jump(); 
+  });
+
+  resetGame();
+  requestAnimationFrame(step);
+
+  // ===== iCloud Photos =====
+  const REAL_PHOTOS = ["p1.jpg","p2.jpg","p3.jpg","p4.jpg","p5.jpg","p6.jpg"];
+  const icloudGrid = document.getElementById("icloudGrid");
+  const icloudViewer = document.getElementById("icloudViewer");
+  const icloudViewerImg = document.getElementById("icloudViewerImg");
+  const icloudViewerClose = document.getElementById("icloudViewerClose");
+  const icloudViewerTitle = document.getElementById("icloudViewerTitle");
+  const icloudSearch = document.getElementById("icloudSearch");
+  const icloudTabs = Array.from(document.querySelectorAll(".icloudTab"));
+
+  let currentFilter = "";
+
+  function buildIcloudGrid(){
+    if (!icloudGrid) return;
+    icloudGrid.innerHTML = "";
+
+    const totalTiles = 24;
+    const realPhotosFiltered = REAL_PHOTOS.filter(n =>
+      n.toLowerCase().includes(currentFilter.toLowerCase())
+    );
+
+    const realCount = Math.min(realPhotosFiltered.length, 10);
+    const slots = new Set();
+    while (slots.size < realCount){
+      slots.add(Math.floor(Math.random() * totalTiles));
+    }
+
+    let idx = 0;
+
+    for (let i=0; i<totalTiles; i++){
+      const tile = document.createElement("div");
+      tile.className = "photoTile";
+
+      if (slots.has(i) && idx < realCount){
+        const src = realPhotosFiltered[idx++];
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        tile.appendChild(img);
+
+        tile.addEventListener("click", ()=>{
+          icloudViewerImg.src = src;
+          icloudViewerTitle.textContent = src;
+          icloudViewer.classList.add("open");
+        });
+      } else {
+        tile.classList.add("loading");
+      }
+
+      icloudGrid.appendChild(tile);
+    }
+  }
+
+  icloudViewerClose.addEventListener("click", ()=>{
+    icloudViewer.classList.remove("open");
+    icloudViewerImg.src = "";
+  });
+
+  window.addEventListener("keydown", (e)=>{
+    if (e.key === "Escape" && icloudViewer.classList.contains("open")){
+      icloudViewerClose.click();
+    }
+  });
+
+  icloudSearch?.addEventListener("input", ()=>{
+    currentFilter = icloudSearch.value || "";
+    buildIcloudGrid();
+  });
+
+  icloudTabs.forEach(tab=>{
+    tab.addEventListener("click", ()=>{
+      icloudTabs.forEach(t=> t.classList.remove("active"));
+      tab.classList.add("active");
+      buildIcloudGrid();
+    });
+  });
+</script>
+</body>
+</html>
