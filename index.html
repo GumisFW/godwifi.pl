@@ -1242,6 +1242,11 @@
       <div class="pic"><img src="freewifi.png" alt="" class="deskIconImg"></div>
       <div>godwifi</div>
     </div>
+    
+    <div class="icon" id="binLauncher">
+      <div class="pic"><img src="files.png" alt="" class="deskIconImg"></div>
+      <div>Kosz</div>
+    </div>
   </div>
 
   <!-- Stage -->
@@ -1460,6 +1465,47 @@
           <button class="finderItem" id="openIcloudPhotos">
             <img src="Galeria iCloud ikona.png" alt="" class="finderIcon">
             <span>Galeria iCloud</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bin (Kosz) -->
+    <section class="app finder" id="binWin">
+      <div class="titlebar" data-drag="binWin">
+        <div class="title">Kosz</div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="binMin">−</button>
+          <button class="win-btn maximize" id="binMax">⤢</button>
+          <button class="win-btn close" id="binClose">×</button>
+        </div>
+      </div>
+
+      <div class="finderPath">~/Kosz</div>
+      <div class="finderBody">
+        <div class="finderGrid">
+          <button class="finderItem">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>premiera</span>
+            <div class="fileBadge">.txt</div>
+          </button>
+
+          <button class="finderItem">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>koncept</span>
+            <div class="fileBadge">.txt</div>
+          </button>
+
+          <button class="finderItem">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>featy</span>
+            <div class="fileBadge">.txt</div>
+          </button>
+
+          <button class="finderItem" id="openBinPhoto">
+            <img src="drive.png" alt="" class="finderIcon">
+            <span>file_00000000...</span>
+            <div class="fileBadge">.png</div>
           </button>
         </div>
       </div>
@@ -2137,10 +2183,12 @@
   const notesWin = document.getElementById("notesWin");
   const driveWin = document.getElementById("driveWin");
   const photosWin = document.getElementById("photosWin");
+  const binWin = document.getElementById("binWin");
 
   const appLauncher = document.getElementById("appLauncher");
   const folderLauncher = document.getElementById("folderLauncher");
   const driveLauncher = document.getElementById("driveLauncher");
+  const binLauncher = document.getElementById("binLauncher");
   const wifiBtn = document.getElementById("wifiBtn");
   const startBtn = document.getElementById("startBtn");
 
@@ -2156,6 +2204,7 @@
   wireWindowControls("notes", notesWin, folderLauncher);
   wireWindowControls("drive", driveWin, driveLauncher);
   wireWindowControls("photos", photosWin, driveLauncher);
+  wireWindowControls("bin", binWin, binLauncher);
 
   // ===== Launchers =====
   const toggle = document.getElementById("toggle");
@@ -2196,6 +2245,25 @@
   driveLauncher.addEventListener("click", ()=>{
     // Show login modal instead of opening drive directly
     showLoginModal();
+  });
+  
+  binLauncher.addEventListener("click", ()=>{
+    toggleWindow(binWin, binLauncher);
+  });
+
+  // ===== Bin Photo Viewer =====
+  const openBinPhoto = document.getElementById("openBinPhoto");
+  
+  openBinPhoto.addEventListener("click", ()=>{
+    // Open the iCloud viewer with the specific photo
+    const viewer = document.getElementById("icloudViewer");
+    const viewerImg = document.getElementById("icloudViewerImg");
+    const viewerTitle = document.getElementById("icloudViewerTitle");
+    
+    viewerImg.src = "file_00000000b198722f8c3faf98fa197865.png";
+    viewerTitle.textContent = "file_00000000b198722f8c3faf98fa197865.png";
+    viewer.classList.add("open");
+    viewer.setAttribute("aria-hidden", "false");
   });
 
   // ===== Login Modal =====
