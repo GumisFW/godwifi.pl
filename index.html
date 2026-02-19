@@ -2658,7 +2658,7 @@
     </section>
 
     <!-- Video Player -->
-    <section class="app finder" id="videoWin" style="width: min(900px, 96vw);">
+    <section class="app finder" id="videoWin" style="width: min(750px, 90vw); max-height: 85vh;">
       <div class="titlebar" data-drag="videoWin">
         <div class="title">Odtwarzacz wideo</div>
         <div class="window-controls">
@@ -2673,7 +2673,7 @@
           width: 100%;
           border-radius: 8px;
           background: #000;
-          max-height: 500px;
+          max-height: 400px;
         "></video>
         
         <div class="playerBar" style="margin-top: 12px;">
@@ -2700,7 +2700,7 @@
           </div>
         </div>
 
-        <div class="trackList" id="videoList" style="margin-top: 12px; max-height: 250px; overflow-y: auto;"></div>
+        <div class="trackList" id="videoList" style="margin-top: 12px; max-height: 180px; overflow-y: auto;"></div>
       </div>
     </section>
   </div>
@@ -3567,11 +3567,21 @@
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      const maxX = (window.innerWidth / 2) - 80;
-      const maxY = (window.innerHeight / 2) - 80;
+      // Get window dimensions
+      const winRect = win.getBoundingClientRect();
+      const winWidth = winRect.width;
+      const winHeight = winRect.height;
+      
+      // Calculate max boundaries to keep titlebar visible
+      // titlebar is ~48px high, so we need at least that much visible
+      const titlebarHeight = 48;
+      const minVisibleX = -(window.innerWidth / 2) + 100; // Keep at least 100px from left
+      const maxVisibleX = (window.innerWidth / 2) - 100; // Keep at least 100px from right
+      const minVisibleY = -(window.innerHeight / 2) + titlebarHeight; // Keep titlebar from going above screen
+      const maxVisibleY = (window.innerHeight / 2) - titlebarHeight - 48; // Keep titlebar from going below taskbar (48px)
 
-      let nx = clamp(baseX + dx, -maxX, maxX);
-      let ny = clamp(baseY + dy, -maxY, maxY);
+      let nx = clamp(baseX + dx, minVisibleX, maxVisibleX);
+      let ny = clamp(baseY + dy, minVisibleY, maxVisibleY);
 
       win.style.setProperty("--x", nx + "px");
       win.style.setProperty("--y", ny + "px");
