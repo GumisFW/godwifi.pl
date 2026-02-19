@@ -2332,7 +2332,7 @@
     </div>
     
     <div class="icon" id="binLauncher">
-      <div class="pic"><img src="files.png" alt="" class="deskIconImg"></div>
+      <div class="pic"><img src="bin.png" alt="" class="deskIconImg"></div>
       <div>Kosz</div>
     </div>
   </div>
@@ -2584,19 +2584,19 @@
       <div class="finderBody">
         <div class="finderGrid">
           <button class="finderItem">
-            <img src="notepad.png" alt="" class="finderIcon notepad-icon">
+            <img src="notes.png" alt="" class="finderIcon notepad-icon">
             <span>premiera</span>
             <div class="fileBadge">.txt</div>
           </button>
 
           <button class="finderItem">
-            <img src="notepad.png" alt="" class="finderIcon notepad-icon">
+            <img src="notes.png" alt="" class="finderIcon notepad-icon">
             <span>koncept</span>
             <div class="fileBadge">.txt</div>
           </button>
 
           <button class="finderItem">
-            <img src="notepad.png" alt="" class="finderIcon notepad-icon">
+            <img src="notes.png" alt="" class="finderIcon notepad-icon">
             <span>featy</span>
             <div class="fileBadge">.txt</div>
           </button>
@@ -3720,30 +3720,23 @@
   const photoLoginCancel = document.getElementById("photoLoginCancel");
   
   const PHOTO_LOGIN_TEXT = "Zanzir";
+  let photoPasswordKeys = 0;
   
   function showPhotoLoginModal(){
     photoLoginModal.classList.add("open");
     photoLoginUsername.value = "";
     photoLoginPassword.value = "";
-    
-    // On mobile, make password field normal password input
-    if (isMobileDevice) {
-      photoLoginPassword.type = "password";
-      photoLoginPassword.removeAttribute("readonly");
-    }
-    
+    photoPasswordKeys = 0;
     setTimeout(() => photoLoginUsername.focus(), 100);
   }
   
   function hidePhotoLoginModal(){
     photoLoginModal.classList.remove("open");
+    photoPasswordKeys = 0;
   }
   
   function attemptPhotoLogin(){
-    // On mobile, accept any password length > 0
-    const requiredPassLength = isMobileDevice ? 1 : 8;
-    
-    if (photoLoginUsername.value === PHOTO_LOGIN_TEXT && photoLoginPassword.value.length >= requiredPassLength) {
+    if (photoLoginUsername.value === PHOTO_LOGIN_TEXT && photoLoginPassword.value.length === 8) {
       hidePhotoLoginModal();
       
       // Open the photo viewer
@@ -3786,7 +3779,7 @@
     }
   }
   
-  // Manual typing for username - no auto-fill
+  // Manual typing for username - user must type "Zanzir" themselves
   photoLoginUsername.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -3799,34 +3792,27 @@
     if (e.key === "Escape") hidePhotoLoginModal();
   });
   
-  // Password field behavior
+  // Password field - auto-fill with bullets (works on both desktop and mobile)
   photoLoginPassword.addEventListener("keydown", (e) => {
-    if (isMobileDevice) {
-      // On mobile, allow normal typing
-      if (e.key === "Enter") {
-        e.preventDefault();
-        attemptPhotoLogin();
-      }
-      if (e.key === "Escape") hidePhotoLoginModal();
-      return;
-    }
-    
-    // Desktop: bullet character behavior
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       
-      if (photoLoginPassword.value.length < 8) {
+      if (photoPasswordKeys < 8) {
         photoLoginPassword.value += "•";
+        photoPasswordKeys++;
         
-        if (photoLoginPassword.value.length === 8) {
+        // Auto-submit when 8 characters are entered
+        if (photoPasswordKeys === 8) {
           setTimeout(() => attemptPhotoLogin(), 200);
         }
       }
     }
     
+    // Allow backspace
     if (e.key === "Backspace") {
       e.preventDefault();
-      if (photoLoginPassword.value.length > 0) {
+      if (photoPasswordKeys > 0) {
+        photoPasswordKeys--;
         photoLoginPassword.value = photoLoginPassword.value.slice(0, -1);
       }
     }
@@ -3857,6 +3843,7 @@
   const loginCancel = document.getElementById("loginCancel");
   
   let loginKeysPressed = 0;
+  let loginPasswordKeys = 0;
   const LOGIN_TEXT = "good_wifey";
   
   // Detect if mobile device
@@ -3868,58 +3855,32 @@
     loginUsername.value = "";
     loginPassword.value = "";
     loginKeysPressed = 0;
-    
-    // On mobile, make password field normal input
-    if (isMobileDevice) {
-      loginPassword.type = "password";
-      loginPassword.removeAttribute("readonly");
-    }
-    
+    loginPasswordKeys = 0;
     setTimeout(() => loginUsername.focus(), 100);
   }
   
   function hideLoginModal(){
     loginModal.classList.remove("open");
     loginKeysPressed = 0;
+    loginPasswordKeys = 0;
   }
   
   function attemptLogin(){
-    // On mobile, accept any password length
-    if (isMobileDevice) {
-      if (loginUsername.value === LOGIN_TEXT && loginPassword.value.length > 0) {
-        hideLoginModal();
-        toggleWindow(driveWin, driveLauncher);
-        return;
-      }
+    if (loginUsername.value === LOGIN_TEXT && loginPassword.value.length === 8) {
+      hideLoginModal();
+      toggleWindow(driveWin, driveLauncher);
     } else {
-      // Desktop: check for exactly 8 characters
-      if (loginUsername.value === LOGIN_TEXT && loginPassword.value.length === 8) {
-        hideLoginModal();
-        toggleWindow(driveWin, driveLauncher);
-        return;
-      }
+      // Shake animation for incorrect login
+      loginModal.querySelector(".login-box").style.animation = "shake 0.3s";
+      setTimeout(() => {
+        loginModal.querySelector(".login-box").style.animation = "";
+      }, 300);
     }
-    
-    // Shake animation for incorrect login
-    loginModal.querySelector(".login-box").style.animation = "shake 0.3s";
-    setTimeout(() => {
-      loginModal.querySelector(".login-box").style.animation = "";
-    }, 300);
   }
   
-  // Auto-fill login field with "good_wifey" when typing (desktop only)
+  // Auto-fill login field with "good_wifey" when typing
   loginUsername.addEventListener("keydown", (e) => {
-    if (isMobileDevice) {
-      // On mobile, allow normal typing
-      if (e.key === "Enter") {
-        e.preventDefault();
-        loginPassword.focus();
-      }
-      if (e.key === "Escape") hideLoginModal();
-      return;
-    }
-    
-    // Desktop: auto-fill behavior
+    // Prevent default typing
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       
@@ -3927,12 +3888,14 @@
         loginUsername.value = LOGIN_TEXT.substring(0, loginKeysPressed + 1);
         loginKeysPressed++;
         
+        // Auto-focus password field when login is complete
         if (loginKeysPressed === LOGIN_TEXT.length) {
           setTimeout(() => loginPassword.focus(), 100);
         }
       }
     }
     
+    // Allow backspace
     if (e.key === "Backspace") {
       e.preventDefault();
       if (loginKeysPressed > 0) {
@@ -3947,34 +3910,27 @@
     if (e.key === "Escape") hideLoginModal();
   });
   
-  // Password field behavior
+  // Password field - auto-fill with bullets
   loginPassword.addEventListener("keydown", (e) => {
-    if (isMobileDevice) {
-      // On mobile, allow normal typing
-      if (e.key === "Enter") {
-        e.preventDefault();
-        attemptLogin();
-      }
-      if (e.key === "Escape") hideLoginModal();
-      return;
-    }
-    
-    // Desktop: bullet character behavior
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       
-      if (loginPassword.value.length < 8) {
+      if (loginPasswordKeys < 8) {
         loginPassword.value += "•";
+        loginPasswordKeys++;
         
-        if (loginPassword.value.length === 8) {
+        // Auto-submit when 8 characters are entered
+        if (loginPasswordKeys === 8) {
           setTimeout(() => attemptLogin(), 200);
         }
       }
     }
     
+    // Allow backspace
     if (e.key === "Backspace") {
       e.preventDefault();
-      if (loginPassword.value.length > 0) {
+      if (loginPasswordKeys > 0) {
+        loginPasswordKeys--;
         loginPassword.value = loginPassword.value.slice(0, -1);
       }
     }
