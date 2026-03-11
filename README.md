@@ -99,8 +99,8 @@ Strona została zaprojektowana jako interaktywne doświadczenie łączące eleme
 ### **v1.2** - 1 marca 2026
 **"SMS & Login Systems"**
 - 💬 SMS Conversation z hidden_user
-- 🎲 3 opcje hasła (17042026 = correct)
-- 🔐 Photo Gallery login (Zanzir)
+- 🎲 3 opcje hasła (******** = correct)
+- 🔐 Photo Gallery login (******)
 - 🔐 Drive auto-login (good_wifey)
 - 📱 Mobile blocking modal
 - 🚫 Mobile Photo login blocked
@@ -176,32 +176,12 @@ godwifi/
   - WiFi Runner (coming soon)
 
 ### SMS:
-- 💬 Hasło WiFi: **17042026** ✅
-- ❌ Złe hasła: 22032026, 2137420
+- 💬 Hasło WiFi: ***************
+- ❌ Złe hasła: ***********, **************
 
 ### Loginy:
 - 📁 Drive: **good_wifey** (auto-fill)
-- 📸 Photos: **Zanzir**
-
----
-
-## 🚀 Instalacja & Hosting
-
-### Lokalne uruchomienie:
-1. Pobierz wszystkie pliki
-2. Zachowaj strukturę folderów
-3. Otwórz `index.html` w przeglądarce
-
-### Upload na hosting:
-1. Użyj skryptu `organize-files.bat` (Windows) lub `organize-files.sh` (Mac/Linux)
-2. Upload całego folderu `godwifi/` na serwer
-3. Upewnij się że `index.html` jest w głównym katalogu
-4. Gotowe!
-
-**Wymagania hostingu:**
-- HTML/CSS/JS support (każdy hosting)
-- Brak wymagań PHP/Database
-- ~50MB przestrzeni (dla audio/video)
+- 📸 Photos: **********
 
 ---
 
