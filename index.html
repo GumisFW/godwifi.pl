@@ -4001,7 +4001,7 @@
     <div class="mobile-app-window" id="mobileFlappyBird">
       <div class="mobile-app-header">
         <button class="mobile-back-btn" onclick="closeMobileApp('mobileFlappyBird'); stopMobileGame();">‹</button>
-        <div class="mobile-app-title">WiFi Runner</div>
+        <div class="mobile-app-title">Flappy WiFi</div>
         <div style="width:32px"></div>
       </div>
       <div class="mobile-app-content" style="padding: 0; display: flex; flex-direction: column;">
@@ -4533,6 +4533,27 @@
       </div>
     </section>
 
+    <!-- Desktop Flappy Bird Game -->
+    <section class="app game" id="flappyWin">
+      <div class="titlebar" data-drag="flappyWin">
+        <div class="title">Flappy WiFi</div>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="flappyMin">−</button>
+          <button class="win-btn maximize" id="flappyMax">□</button>
+          <button class="win-btn close" id="flappyClose">×</button>
+        </div>
+      </div>
+
+      <div class="gameWrap">
+        <div class="gameTop">
+          <div>Score: <span id="flappyScore">0</span> · Best: <span id="flappyBest">0</span></div>
+          <div id="flappyState">Click / Space to start</div>
+        </div>
+        <canvas id="flappyCanvas" width="900" height="500"></canvas>
+        <div class="gameHint">Controls: <b>Space</b> / <b>Click</b> to fly. After game over: Space to restart.</div>
+      </div>
+    </section>
+
     <!-- Video Player -->
     <section class="app finder" id="videoWin" style="width: min(750px, 90vw); max-height: 85vh;">
       <div class="titlebar" data-drag="videoWin">
@@ -4612,7 +4633,7 @@
         <button class="desktop-game-card" onclick="selectDesktopGame('flappy')">
           <div class="desktop-game-icon">🐦</div>
           <div class="desktop-game-name">Flappy WiFi</div>
-          <div class="desktop-game-desc">Tap to fly and avoid pipes</div>
+          <div class="desktop-game-desc">Click or Space to fly through obstacles</div>
         </button>
       </div>
       
@@ -4739,6 +4760,11 @@
       <div class="taskbar-app" id="taskGame" style="display:none;">
         <span>🎮</span>
         <span>Wi-Fi Runner</span>
+      </div>
+
+      <div class="taskbar-app" id="taskFlappy" style="display:none;">
+        <span>🐦</span>
+        <span>Flappy WiFi</span>
       </div>
       
       <!-- Social media apps -->
@@ -5646,6 +5672,7 @@
   const koncertWin = document.getElementById("koncertWin");
   const mixWin = document.getElementById("mixWin");
   const gameWin = document.getElementById("gameWin");
+  const flappyWin = document.getElementById("flappyWin");
   const notesWin = document.getElementById("notesWin");
   const driveWin = document.getElementById("driveWin");
   const photosWin = document.getElementById("photosWin");
@@ -5668,6 +5695,11 @@
   wireWindowControls("koncert", koncertWin, folderLauncher);
   wireWindowControls("mix", mixWin, folderLauncher, ()=> stopMix(true));
   wireWindowControls("game", gameWin, wifiBtn, ()=>{ taskGame.style.display = "none"; });
+  wireWindowControls("flappy", flappyWin, null, ()=>{ 
+    const taskFlappy = document.getElementById("taskFlappy");
+    if (taskFlappy) taskFlappy.style.display = "none";
+    stopDesktopFlappy();
+  });
   wireWindowControls("notes", notesWin, folderLauncher);
   wireWindowControls("drive", driveWin, driveLauncher);
   wireWindowControls("photos", photosWin, driveLauncher);
@@ -6101,14 +6133,31 @@
         startOrResumeGame();
       }
     } else if (gameType === 'flappy') {
-      // For now, show alert - could implement desktop flappy bird
-      alert('Flappy WiFi coming soon on desktop! Play it on mobile by tapping the signal icon 5 times.');
+      // Open Flappy WiFi game
+      const flappyWin = document.getElementById('flappyWin');
+      const taskFlappy = document.getElementById('taskFlappy');
+      toggleWindow(flappyWin, null, ()=>{ taskFlappy.style.display = "none"; });
+      if (flappyWin.classList.contains("open")){
+        taskFlappy.style.display = "flex";
+        taskFlappy.classList.add("active");
+        initDesktopFlappy();
+      }
     }
   };
 
   taskApp.addEventListener("click", ()=> toggleWindow(app, appLauncher, ()=>{ setOpen(false); taskApp.style.display = "none"; }));
   taskFinder.addEventListener("click", ()=> toggleWindow(finderWin, folderLauncher, ()=>{ taskFinder.style.display = "none"; }));
   taskGame.addEventListener("click", ()=> toggleWindow(gameWin, wifiBtn, ()=>{ taskGame.style.display = "none"; }));
+  
+  const taskFlappy = document.getElementById("taskFlappy");
+  if (taskFlappy) {
+    taskFlappy.addEventListener("click", ()=> {
+      toggleWindow(flappyWin, null, ()=>{ taskFlappy.style.display = "none"; });
+      if (flappyWin.classList.contains("open")) {
+        initDesktopFlappy();
+      }
+    });
+  }
 
   const openKoncert = document.getElementById("openKoncert");
   const openMix = document.getElementById("openMix");
@@ -7494,35 +7543,90 @@
     const ctx = mobileGameCtx;
     const canvas = mobileGameCanvas;
     
-    // Background
-    ctx.fillStyle = '#1a1825';
+    // Futuristic gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#0f0e17');
+    gradient.addColorStop(0.5, '#1a1825');
+    gradient.addColorStop(1, '#2a2438');
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Pipes
-    ctx.fillStyle = '#667eea';
+    // Grid pattern (subtle)
+    ctx.strokeStyle = 'rgba(102, 126, 234, 0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < canvas.height; i += 30) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+      ctx.stroke();
+    }
+    
+    // Pipes - clean futuristic design
     mobilePipes.forEach(pipe => {
+      // Gradient for pipes
+      const pipeGradient = ctx.createLinearGradient(pipe.x, 0, pipe.x + 60, 0);
+      pipeGradient.addColorStop(0, '#667eea');
+      pipeGradient.addColorStop(0.5, '#764ba2');
+      pipeGradient.addColorStop(1, '#667eea');
+      
       // Top pipe
+      ctx.fillStyle = pipeGradient;
       ctx.fillRect(pipe.x, 0, 60, pipe.topHeight);
+      
+      // Top pipe cap
+      ctx.fillStyle = '#8B5CF6';
+      ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, 70, 20);
+      
       // Bottom pipe
+      ctx.fillStyle = pipeGradient;
       ctx.fillRect(pipe.x, pipe.bottomY, 60, canvas.height - pipe.bottomY);
       
-      // Pipe borders
-      ctx.strokeStyle = '#764ba2';
-      ctx.lineWidth = 3;
+      // Bottom pipe cap
+      ctx.fillStyle = '#8B5CF6';
+      ctx.fillRect(pipe.x - 5, pipe.bottomY, 70, 20);
+      
+      // Glow effect
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#667eea';
+      ctx.strokeStyle = 'rgba(102, 126, 234, 0.6)';
+      ctx.lineWidth = 2;
       ctx.strokeRect(pipe.x, 0, 60, pipe.topHeight);
       ctx.strokeRect(pipe.x, pipe.bottomY, 60, canvas.height - pipe.bottomY);
+      ctx.shadowBlur = 0;
     });
     
-    // Bird
-    ctx.fillStyle = '#fff';
+    // Bird - glowing circle design
+    const birdGradient = ctx.createRadialGradient(
+      mobileBird.x, mobileBird.y, 0,
+      mobileBird.x, mobileBird.y, mobileBird.radius
+    );
+    birdGradient.addColorStop(0, '#ffffff');
+    birdGradient.addColorStop(0.7, '#a78bfa');
+    birdGradient.addColorStop(1, '#667eea');
+    
+    ctx.fillStyle = birdGradient;
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#a78bfa';
     ctx.beginPath();
     ctx.arc(mobileBird.x, mobileBird.y, mobileBird.radius, 0, Math.PI * 2);
     ctx.fill();
     
+    // Bird outer glow
+    ctx.strokeStyle = 'rgba(167, 139, 250, 0.8)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
     // Bird eye
     ctx.fillStyle = '#1a1825';
     ctx.beginPath();
-    ctx.arc(mobileBird.x + 5, mobileBird.y - 3, 3, 0, Math.PI * 2);
+    ctx.arc(mobileBird.x + 8, mobileBird.y - 5, 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Bird eye highlight
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(mobileBird.x + 10, mobileBird.y - 6, 2, 0, Math.PI * 2);
     ctx.fill();
   }
   
@@ -7556,6 +7660,391 @@
     // Allow restart
     setTimeout(() => {
       resetMobileGame();
+    }, 100);
+  }
+  
+  // ========================================
+  // DESKTOP FLAPPY BIRD GAME
+  // ========================================
+  
+  let desktopFlappyCanvas, desktopFlappyCtx;
+  let desktopFlappyRunning = false;
+  let desktopFlappyScore = 0;
+  let desktopFlappyBest = 0;
+  let desktopFlappyAnimationFrame = null;
+  let desktopFlappyFrameCount = 0;
+  
+  const DESKTOP_GRAVITY = 0.6;
+  const DESKTOP_JUMP = -10;
+  const DESKTOP_PIPE_SPEED = 3;
+  const DESKTOP_PIPE_GAP = 180;
+  
+  let desktopBird = {
+    x: 150,
+    y: 250,
+    radius: 20,
+    velocity: 0
+  };
+  
+  let desktopPipes = [];
+  
+  window.initDesktopFlappy = function() {
+    console.log('Initializing desktop Flappy Bird...');
+    desktopFlappyCanvas = document.getElementById('flappyCanvas');
+    if (!desktopFlappyCanvas) {
+      console.error('Desktop Flappy canvas not found!');
+      return;
+    }
+    
+    desktopFlappyCtx = desktopFlappyCanvas.getContext('2d');
+    
+    // Load best score
+    const saved = localStorage.getItem('flappyBest');
+    if (saved) {
+      desktopFlappyBest = parseInt(saved);
+      document.getElementById('flappyBest').textContent = desktopFlappyBest;
+    }
+    
+    // Controls
+    desktopFlappyCanvas.addEventListener('click', handleDesktopFlappyClick);
+    document.addEventListener('keydown', handleDesktopFlappyKey);
+    
+    resetDesktopFlappy();
+  };
+  
+  function handleDesktopFlappyClick() {
+    if (!desktopFlappyRunning) {
+      startDesktopFlappy();
+    } else {
+      desktopBird.velocity = DESKTOP_JUMP;
+    }
+  }
+  
+  function handleDesktopFlappyKey(e) {
+    const flappyWin = document.getElementById('flappyWin');
+    if (!flappyWin || !flappyWin.classList.contains('open')) return;
+    
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (!desktopFlappyRunning) {
+        startDesktopFlappy();
+      } else {
+        desktopBird.velocity = DESKTOP_JUMP;
+      }
+    }
+  }
+  
+  function startDesktopFlappy() {
+    desktopFlappyRunning = true;
+    document.getElementById('flappyState').textContent = 'Flying...';
+    desktopFlappyGameLoop();
+  }
+  
+  function resetDesktopFlappy() {
+    desktopFlappyRunning = false;
+    desktopFlappyScore = 0;
+    desktopFlappyFrameCount = 0;
+    desktopPipes = [];
+    
+    desktopBird.y = 250;
+    desktopBird.velocity = 0;
+    
+    document.getElementById('flappyScore').textContent = '0';
+    document.getElementById('flappyState').textContent = 'Click / Space to start';
+    
+    drawDesktopFlappy();
+  }
+  
+  window.stopDesktopFlappy = function() {
+    desktopFlappyRunning = false;
+    if (desktopFlappyAnimationFrame) {
+      cancelAnimationFrame(desktopFlappyAnimationFrame);
+      desktopFlappyAnimationFrame = null;
+    }
+  };
+  
+  function desktopFlappyGameLoop() {
+    if (!desktopFlappyRunning) return;
+    
+    updateDesktopFlappy();
+    drawDesktopFlappy();
+    
+    desktopFlappyAnimationFrame = requestAnimationFrame(desktopFlappyGameLoop);
+  }
+  
+  function updateDesktopFlappy() {
+    // Update bird
+    desktopBird.velocity += DESKTOP_GRAVITY;
+    desktopBird.y += desktopBird.velocity;
+    
+    // Ground collision
+    if (desktopBird.y + desktopBird.radius > desktopFlappyCanvas.height) {
+      desktopGameOver();
+      return;
+    }
+    
+    // Ceiling collision
+    if (desktopBird.y - desktopBird.radius < 0) {
+      desktopBird.y = desktopBird.radius;
+      desktopBird.velocity = 0;
+    }
+    
+    // Spawn pipes
+    desktopFlappyFrameCount++;
+    if (desktopFlappyFrameCount % 100 === 0) {
+      const minHeight = 80;
+      const maxHeight = desktopFlappyCanvas.height - DESKTOP_PIPE_GAP - 80;
+      const topHeight = minHeight + Math.random() * (maxHeight - minHeight);
+      
+      desktopPipes.push({
+        x: desktopFlappyCanvas.width,
+        topHeight: topHeight,
+        bottomY: topHeight + DESKTOP_PIPE_GAP,
+        scored: false
+      });
+    }
+    
+    // Update pipes
+    for (let i = desktopPipes.length - 1; i >= 0; i--) {
+      const pipe = desktopPipes[i];
+      pipe.x -= DESKTOP_PIPE_SPEED;
+      
+      // Remove off-screen pipes
+      if (pipe.x + 70 < 0) {
+        desktopPipes.splice(i, 1);
+        continue;
+      }
+      
+      // Score
+      if (!pipe.scored && pipe.x + 70 < desktopBird.x) {
+        pipe.scored = true;
+        desktopFlappyScore++;
+        document.getElementById('flappyScore').textContent = desktopFlappyScore;
+        
+        // Update best score
+        if (desktopFlappyScore > desktopFlappyBest) {
+          desktopFlappyBest = desktopFlappyScore;
+          localStorage.setItem('flappyBest', desktopFlappyBest);
+          document.getElementById('flappyBest').textContent = desktopFlappyBest;
+        }
+      }
+      
+      // Collision detection
+      if (
+        desktopBird.x + desktopBird.radius > pipe.x &&
+        desktopBird.x - desktopBird.radius < pipe.x + 70
+      ) {
+        if (
+          desktopBird.y - desktopBird.radius < pipe.topHeight ||
+          desktopBird.y + desktopBird.radius > pipe.bottomY
+        ) {
+          desktopGameOver();
+          return;
+        }
+      }
+    }
+  }
+  
+  function drawDesktopFlappy() {
+    const ctx = desktopFlappyCtx;
+    const canvas = desktopFlappyCanvas;
+    
+    // Futuristic gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#0f0e17');
+    gradient.addColorStop(0.5, '#1a1825');
+    gradient.addColorStop(1, '#2a2438');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Animated grid pattern
+    ctx.strokeStyle = 'rgba(102, 126, 234, 0.08)';
+    ctx.lineWidth = 1;
+    const gridOffset = (Date.now() / 50) % 40;
+    for (let i = -40; i < canvas.height + 40; i += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, i + gridOffset);
+      ctx.lineTo(canvas.width, i + gridOffset);
+      ctx.stroke();
+    }
+    
+    // Floating particles
+    ctx.fillStyle = 'rgba(167, 139, 250, 0.2)';
+    for (let i = 0; i < 20; i++) {
+      const x = (i * 50 + Date.now() / 10) % canvas.width;
+      const y = (i * 37) % canvas.height;
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Pipes - clean futuristic design
+    desktopPipes.forEach(pipe => {
+      // Gradient for pipes
+      const pipeGradient = ctx.createLinearGradient(pipe.x, 0, pipe.x + 70, 0);
+      pipeGradient.addColorStop(0, '#667eea');
+      pipeGradient.addColorStop(0.5, '#764ba2');
+      pipeGradient.addColorStop(1, '#667eea');
+      
+      // Top pipe
+      ctx.fillStyle = pipeGradient;
+      ctx.fillRect(pipe.x, 0, 70, pipe.topHeight);
+      
+      // Top pipe cap with glow
+      ctx.fillStyle = '#8B5CF6';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#8B5CF6';
+      ctx.fillRect(pipe.x - 8, pipe.topHeight - 25, 86, 25);
+      
+      // Bottom pipe
+      ctx.fillStyle = pipeGradient;
+      ctx.fillRect(pipe.x, pipe.bottomY, 70, canvas.height - pipe.bottomY);
+      
+      // Bottom pipe cap with glow
+      ctx.fillStyle = '#8B5CF6';
+      ctx.fillRect(pipe.x - 8, pipe.bottomY, 86, 25);
+      ctx.shadowBlur = 0;
+      
+      // Neon outline
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(pipe.x, 0, 70, pipe.topHeight);
+      ctx.strokeRect(pipe.x, pipe.bottomY, 70, canvas.height - pipe.bottomY);
+      
+      // Inner details - circuit pattern
+      ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+      ctx.lineWidth = 1;
+      for (let y = 10; y < pipe.topHeight - 30; y += 20) {
+        ctx.beginPath();
+        ctx.moveTo(pipe.x + 15, y);
+        ctx.lineTo(pipe.x + 55, y);
+        ctx.stroke();
+      }
+      for (let y = pipe.bottomY + 30; y < canvas.height - 10; y += 20) {
+        ctx.beginPath();
+        ctx.moveTo(pipe.x + 15, y);
+        ctx.lineTo(pipe.x + 55, y);
+        ctx.stroke();
+      }
+    });
+    
+    // Bird - glowing orb design
+    const birdGradient = ctx.createRadialGradient(
+      desktopBird.x, desktopBird.y, 0,
+      desktopBird.x, desktopBird.y, desktopBird.radius * 1.5
+    );
+    birdGradient.addColorStop(0, '#ffffff');
+    birdGradient.addColorStop(0.4, '#f0abfc');
+    birdGradient.addColorStop(0.7, '#a78bfa');
+    birdGradient.addColorStop(1, 'rgba(102, 126, 234, 0)');
+    
+    // Outer glow
+    ctx.fillStyle = birdGradient;
+    ctx.shadowBlur = 30;
+    ctx.shadowColor = '#a78bfa';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x, desktopBird.y, desktopBird.radius * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Core bird
+    const coreGradient = ctx.createRadialGradient(
+      desktopBird.x - 5, desktopBird.y - 5, 0,
+      desktopBird.x, desktopBird.y, desktopBird.radius
+    );
+    coreGradient.addColorStop(0, '#ffffff');
+    coreGradient.addColorStop(1, '#c4b5fd');
+    
+    ctx.fillStyle = coreGradient;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x, desktopBird.y, desktopBird.radius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Neon ring
+    ctx.strokeStyle = '#a78bfa';
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#a78bfa';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x, desktopBird.y, desktopBird.radius + 3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Bird eye
+    ctx.fillStyle = '#1a1825';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x + 8, desktopBird.y - 5, 5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Eye highlight
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x + 10, desktopBird.y - 7, 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Trail effect
+    ctx.fillStyle = 'rgba(167, 139, 250, 0.1)';
+    ctx.beginPath();
+    ctx.arc(desktopBird.x - 15, desktopBird.y, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(desktopBird.x - 25, desktopBird.y, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  function desktopGameOver() {
+    desktopFlappyRunning = false;
+    document.getElementById('flappyState').textContent = 'Game Over! Click/Space to restart';
+    
+    if (desktopFlappyAnimationFrame) {
+      cancelAnimationFrame(desktopFlappyAnimationFrame);
+      desktopFlappyAnimationFrame = null;
+    }
+    
+    // Draw game over screen
+    const ctx = desktopFlappyCtx;
+    const canvas = desktopFlappyCanvas;
+    
+    // Dark overlay
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Neon box
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#667eea';
+    ctx.strokeRect(canvas.width / 2 - 200, canvas.height / 2 - 120, 400, 240);
+    ctx.shadowBlur = 0;
+    
+    // Title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 48px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#a78bfa';
+    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+    
+    // Scores
+    ctx.font = '28px sans-serif';
+    ctx.fillStyle = '#f0abfc';
+    ctx.shadowBlur = 10;
+    ctx.fillText(`Score: ${desktopFlappyScore}`, canvas.width / 2, canvas.height / 2 + 10);
+    
+    ctx.fillStyle = '#c4b5fd';
+    ctx.fillText(`Best: ${desktopFlappyBest}`, canvas.width / 2, canvas.height / 2 + 50);
+    
+    // Instruction
+    ctx.font = '18px sans-serif';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.shadowBlur = 5;
+    ctx.fillText('Press SPACE or CLICK to restart', canvas.width / 2, canvas.height / 2 + 95);
+    ctx.shadowBlur = 0;
+    
+    // Allow restart
+    setTimeout(() => {
+      resetDesktopFlappy();
     }, 100);
   }
 })();
