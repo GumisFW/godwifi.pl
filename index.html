@@ -6136,11 +6136,18 @@
       // Open Flappy WiFi game
       const flappyWin = document.getElementById('flappyWin');
       const taskFlappy = document.getElementById('taskFlappy');
+      
+      // Initialize BEFORE opening window
+      setTimeout(() => {
+        if (window.initDesktopFlappy) {
+          initDesktopFlappy();
+        }
+      }, 100);
+      
       toggleWindow(flappyWin, null, ()=>{ taskFlappy.style.display = "none"; });
       if (flappyWin.classList.contains("open")){
         taskFlappy.style.display = "flex";
         taskFlappy.classList.add("active");
-        initDesktopFlappy();
       }
     }
   };
@@ -6153,9 +6160,12 @@
   if (taskFlappy) {
     taskFlappy.addEventListener("click", ()=> {
       toggleWindow(flappyWin, null, ()=>{ taskFlappy.style.display = "none"; });
-      if (flappyWin.classList.contains("open")) {
-        initDesktopFlappy();
-      }
+      // Initialize after window opens
+      setTimeout(() => {
+        if (flappyWin.classList.contains("open") && window.initDesktopFlappy) {
+          initDesktopFlappy();
+        }
+      }, 100);
     });
   }
 
@@ -7691,12 +7701,16 @@
   window.initDesktopFlappy = function() {
     console.log('Initializing desktop Flappy Bird...');
     desktopFlappyCanvas = document.getElementById('flappyCanvas');
+    console.log('Canvas element:', desktopFlappyCanvas);
+    
     if (!desktopFlappyCanvas) {
       console.error('Desktop Flappy canvas not found!');
       return;
     }
     
     desktopFlappyCtx = desktopFlappyCanvas.getContext('2d');
+    console.log('Canvas context:', desktopFlappyCtx);
+    console.log('Canvas size:', desktopFlappyCanvas.width, 'x', desktopFlappyCanvas.height);
     
     // Load best score
     const saved = localStorage.getItem('flappyBest');
@@ -7709,7 +7723,9 @@
     desktopFlappyCanvas.addEventListener('click', handleDesktopFlappyClick);
     document.addEventListener('keydown', handleDesktopFlappyKey);
     
+    console.log('Calling resetDesktopFlappy...');
     resetDesktopFlappy();
+    console.log('Desktop Flappy initialized successfully');
   };
   
   function handleDesktopFlappyClick() {
@@ -7848,6 +7864,11 @@
   function drawDesktopFlappy() {
     const ctx = desktopFlappyCtx;
     const canvas = desktopFlappyCanvas;
+    
+    if (!ctx || !canvas) {
+      console.error('Canvas or context not ready');
+      return;
+    }
     
     // Futuristic gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
