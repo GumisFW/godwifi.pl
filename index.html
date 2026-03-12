@@ -6141,15 +6141,15 @@
 
   // ===== MIX PLAYER =====
   const MIX_TRACKS = [
-    { title: "Utwór 1", src: "assets/audio/assets/audio/mix1.mp3" },
-    { title: "Utwór 2", src: "assets/audio/assets/audio/mix2.mp3" },
-    { title: "Utwór 3", src: "assets/audio/assets/audio/mix3.mp3" },
-    { title: "Utwór 4", src: "assets/audio/assets/audio/mix4.mp3" },
-    { title: "Utwór 5", src: "assets/audio/assets/audio/mix5.mp3" },
-    { title: "Utwór 6", src: "assets/audio/assets/audio/mix6.mp3" },
-    { title: "Utwór 7", src: "assets/audio/assets/audio/mix7.mp3" },
-    { title: "Utwór 8", src: "assets/audio/assets/audio/mix8.mp3" },
-    { title: "Utwór 9", src: "assets/audio/assets/audio/mix9.mp3" },
+    { title: "Utwór 1", src: "assets/audio/mix1.mp3" },
+    { title: "Utwór 2", src: "assets/audio/mix2.mp3" },
+    { title: "Utwór 3", src: "assets/audio/mix3.mp3" },
+    { title: "Utwór 4", src: "assets/audio/mix4.mp3" },
+    { title: "Utwór 5", src: "assets/audio/mix5.mp3" },
+    { title: "Utwór 6", src: "assets/audio/mix6.mp3" },
+    { title: "Utwór 7", src: "assets/audio/mix7.mp3" },
+    { title: "Utwór 8", src: "assets/audio/mix8.mp3" },
+    { title: "Utwór 9", src: "assets/audio/mix9.mp3" },
   ];
 
   const mixAudio = document.getElementById("mixAudio");
@@ -6370,13 +6370,13 @@
 
   // ===== VIDEO PLAYER =====
   const VIDEO_FILES = [
-    { title: "BMX Video 1", src: "assets/video/assets/video/bmx1.mp4" },
-    { title: "BMX Video 2", src: "assets/video/assets/video/bmx2.mp4" },
-    { title: "BMX Video 3", src: "assets/video/assets/video/bmx3.mp4" },
+    { title: "BMX Video 1", src: "assets/video/bmx1.mp4" },
+    { title: "BMX Video 2", src: "assets/video/bmx2.mp4" },
+    { title: "BMX Video 3", src: "assets/video/bmx3.mp4" },
     // bmx4.mp4 is missing - skip it
-    { title: "BMX Video 5", src: "assets/video/assets/video/bmx5.mp4" },
-    { title: "BMX Video 6", src: "assets/video/assets/video/bmx6.mp4" },
-    { title: "BMX Video 7", src: "assets/video/assets/video/bmx7.mp4" },
+    { title: "BMX Video 5", src: "assets/video/bmx5.mp4" },
+    { title: "BMX Video 6", src: "assets/video/bmx6.mp4" },
+    { title: "BMX Video 7", src: "assets/video/bmx7.mp4" },
   ];
 
   const videoPlayer = document.getElementById("videoPlayer");
@@ -6397,7 +6397,7 @@
       row.innerHTML = `
         <div class="left">
           <div class="name">${v.title}</div>
-          <div class="sub">${v.src}</div>
+          <div class="sub">Kliknij aby odtworzyć</div>
         </div>
         <div class="right">${(i === videoIndex && !videoPlayer.paused) ? "PLAYING" : ""}</div>
       `;
@@ -6901,15 +6901,15 @@
 
   // ===== Mobile Music Player =====
   const MOBILE_TRACKS = [
-    { title: "Utwór 1", src: "assets/audio/assets/audio/mix1.mp3" },
-    { title: "Utwór 2", src: "assets/audio/assets/audio/mix2.mp3" },
-    { title: "Utwór 3", src: "assets/audio/assets/audio/mix3.mp3" },
-    { title: "Utwór 4", src: "assets/audio/assets/audio/mix4.mp3" },
-    { title: "Utwór 5", src: "assets/audio/assets/audio/mix5.mp3" },
-    { title: "Utwór 6", src: "assets/audio/assets/audio/mix6.mp3" },
-    { title: "Utwór 7", src: "assets/audio/assets/audio/mix7.mp3" },
-    { title: "Utwór 8", src: "assets/audio/assets/audio/mix8.mp3" },
-    { title: "Utwór 9", src: "assets/audio/assets/audio/mix9.mp3" },
+    { title: "Utwór 1", src: "assets/audio/mix1.mp3" },
+    { title: "Utwór 2", src: "assets/audio/mix2.mp3" },
+    { title: "Utwór 3", src: "assets/audio/mix3.mp3" },
+    { title: "Utwór 4", src: "assets/audio/mix4.mp3" },
+    { title: "Utwór 5", src: "assets/audio/mix5.mp3" },
+    { title: "Utwór 6", src: "assets/audio/mix6.mp3" },
+    { title: "Utwór 7", src: "assets/audio/mix7.mp3" },
+    { title: "Utwór 8", src: "assets/audio/mix8.mp3" },
+    { title: "Utwór 9", src: "assets/audio/mix9.mp3" },
   ];
 
   const mobileAudio = document.getElementById('mobileAudio');
@@ -7074,12 +7074,12 @@
 
   // ===== Mobile Videos =====
   const MOBILE_VIDEOS = [
-    { title: "BMX Video 1", src: "assets/video/assets/video/bmx1.mp4" },
-    { title: "BMX Video 2", src: "assets/video/assets/video/bmx2.mp4" },
-    { title: "BMX Video 3", src: "assets/video/assets/video/bmx3.mp4" },
-    { title: "BMX Video 5", src: "assets/video/assets/video/bmx5.mp4" },
-    { title: "BMX Video 6", src: "assets/video/assets/video/bmx6.mp4" },
-    { title: "BMX Video 7", src: "assets/video/assets/video/bmx7.mp4" },
+    { title: "BMX Video 1", src: "assets/video/bmx1.mp4" },
+    { title: "BMX Video 2", src: "assets/video/bmx2.mp4" },
+    { title: "BMX Video 3", src: "assets/video/bmx3.mp4" },
+    { title: "BMX Video 5", src: "assets/video/bmx5.mp4" },
+    { title: "BMX Video 6", src: "assets/video/bmx6.mp4" },
+    { title: "BMX Video 7", src: "assets/video/bmx7.mp4" },
   ];
 
   function initMobileVideos() {
